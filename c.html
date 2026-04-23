@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>MedScenario | Medical Education Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { background: #f4f7fc; padding: 20px 24px; color: #1e293b; }
+    @media (max-width: 768px) { body { padding: 16px; } }
+    .container { max-width: 1440px; margin: 0 auto; }
+
+    /* Navigation */
+    .topnav {
+      display: flex; justify-content: space-between; align-items: center; background: white;
+      padding: 12px 24px; border-radius: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      margin-bottom: 28px; position: relative; flex-wrap: wrap;
+    }
+    .logo { font-weight: 800; background: linear-gradient(135deg, #2563eb, #7c3aed); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.6rem; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .navlinks { display: flex; gap: 28px; align-items: center; }
+    .navlinks a { text-decoration: none; font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 8px; color: #4b5563; transition: all 0.2s; }
+    .navlinks a:hover, .navlinks a.active { color: #2563eb; }
+    .hamburger { display: none; font-size: 1.6rem; background: none; border: none; cursor: pointer; color: #1e293b; padding: 8px; }
+    .nav-right { display: flex; align-items: center; gap: 20px; position: relative; }
+    .notification-icon { font-size: 1.3rem; color: #4b5563; cursor: pointer; background: none; border: none; }
+    .profile { width: 42px; height: 42px; background: linear-gradient(135deg, #2563eb, #7c3aed); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; cursor: pointer; }
+    .dropdown-menu { position: absolute; top: 55px; right: 0; background: white; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); padding: 12px 0; min-width: 180px; display: none; z-index: 100; }
+    .dropdown-menu.show { display: block; }
+    .dropdown-menu a { display: block; padding: 10px 20px; text-decoration: none; color: #334155; font-size: 0.85rem; }
+    .dropdown-menu a:hover { background: #f1f5f9; color: #2563eb; }
+    .dropdown-menu button { width: 100%; padding: 10px 20px; text-align: left; background: none; border: none; cursor: pointer; font-size: 0.85rem; color: #334155; }
+    .dropdown-menu button:hover { background: #f1f5f9; color: #2563eb; }
+    @media (max-width: 900px) { .hamburger { display: block; } .navlinks { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; flex-direction: column; padding: 20px; gap: 16px; border-radius: 0 0 28px 28px; z-index: 1000; } .navlinks.show { display: flex; } }
+
+    /* Main Content */
+    .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 28px; }
+    @media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: white; border-radius: 28px; padding: 24px; margin-bottom: 24px; border: 1px solid #eff3f6; }
+    .welcome-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+    .welcome { font-size: 1.8rem; font-weight: 700; }
+    .points-card { background: #eef2ff; padding: 8px 20px; border-radius: 40px; display: flex; align-items: center; gap: 8px; }
+    .points-card i { color: #f59e0b; font-size: 1rem; }
+    .points-card span { font-weight: 800; color: #2563eb; font-size: 1.2rem; }
+    .search-box { position: relative; margin-bottom: 20px; }
+    .search { width: 100%; padding: 14px 16px 14px 48px; border-radius: 60px; border: 1px solid #e2e8f0; background: #f9fafb; font-size: 0.95rem; outline: none; }
+    .search:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .search-box i { position: absolute; top: 16px; left: 20px; color: #94a3b8; }
+    .quick-resources { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 8px 0; }
+    .resource-card { background: linear-gradient(135deg, #f8fafc, #ffffff); padding: 18px 12px; border-radius: 24px; text-align: center; border: 1px solid #eef2ff; transition: all 0.2s; cursor: pointer; }
+    .resource-card:hover { transform: translateY(-3px); }
+    .resource-card i { font-size: 1.8rem; color: #2563eb; margin-bottom: 10px; }
+    .featured { background: linear-gradient(135deg, #1e40af, #7c3aed); color: white; padding: 28px; border-radius: 28px; margin-bottom: 24px; }
+    .featured .badge { background: rgba(255,255,255,0.2); display: inline-block; padding: 4px 14px; border-radius: 30px; font-size: 0.7rem; margin-bottom: 12px; }
+    .featured h2 { font-size: 1.6rem; margin-bottom: 8px; }
+    .featured button { margin-top: 18px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 10px 24px; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; }
+    .leader-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f2f5; }
+    .user-with-country { display: flex; align-items: center; gap: 12px; }
+    .user-avatar { width: 38px; height: 38px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+    .points-badge { font-weight: 800; color: #2563eb; background: #eef2ff; padding: 4px 12px; border-radius: 40px; font-size: 0.8rem; }
+    .subscription { background: linear-gradient(115deg, #eef2ff, #ffffff); border-radius: 28px; padding: 22px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; border: 1px solid #c7d2fe; }
+    .subscription button { background: #2563eb; color: white; border: none; padding: 12px 28px; border-radius: 40px; font-weight: 700; cursor: pointer; }
+    .sidebar .card { margin-bottom: 24px; }
+    .disease-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .disease-name { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #2563eb, #7c3aed); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .tabs { display: flex; gap: 12px; margin: 16px 0; flex-wrap: wrap; }
+    .tab { padding: 8px 18px; border-radius: 40px; background: #f3f4f6; font-size: 0.8rem; font-weight: 500; cursor: pointer; }
+    .tab.active { background: #2563eb; color: white; }
+    .disease-content { font-size: 0.9rem; line-height: 1.5; color: #334155; margin-top: 12px; }
+    .btn { width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 60px; font-weight: 600; margin-top: 16px; cursor: pointer; }
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 60px; font-size: 0.85rem; z-index: 2000; display: none; }
+    .loading { text-align: center; padding: 20px; color: #2563eb; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="topnav">
+    <div class="logo" onclick="location.href='index.html'"><i class="fas fa-heartbeat"></i> MedScenario</div>
+    <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+    <div class="navlinks" id="navLinks">
+  <a href="index.html">🏠 Home</a>
+  <a href="diseases.html">📚 Diseases</a>
+  <a href="scenarios.html">🩺 Scenarios</a>
+  <a href="competition.html">🏆 Competitions</a>
+  <a href="subscription.html">💎 Subscribe</a>
+  <a href="admin.html" style="background: linear-gradient(135deg, #ef4444, #dc2626); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700;">👑 Admin</a>
+</div>
+    <div class="nav-right">
+      <button class="notification-icon" id="notificationBtn"><i class="fas fa-bell"></i></button>
+      <div class="profile" id="profileBtn"><span id="userInitial">DR</span></div>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="profile.html">👤 My Profile</a>
+        <button id="logoutBtn">🚪 Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <div class="welcome-section">
+          <div class="welcome">Welcome, <span id="userName">Doctor</span>! 👋</div>
+          <div class="points-card">
+            <i class="fas fa-star"></i>
+            <span id="userPoints">0</span> points
+          </div>
+        </div>
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input class="search" id="searchInput" placeholder="Search for diseases...">
+          <div id="searchHint" style="font-size: 0.7rem; margin-top: 6px; color: #5b6e8c;"></div>
+        </div>
+        <div class="quick-resources">
+          <div class="resource-card" data-type="quiz"><i class="fas fa-puzzle-piece"></i><h4>Daily Quiz</h4><p>Test knowledge</p></div>
+          <div class="resource-card" data-type="cases"><i class="fas fa-folder-open"></i><h4>Clinical Cases</h4><p>Real scenarios</p></div>
+          <div class="resource-card" data-type="things"><i class="fas fa-lightbulb"></i><h4>Things to Know</h4><p>High-yield facts</p></div>
+        </div>
+      </div>
+
+      <div class="featured">
+        <div class="badge">🔥 Case of the Day</div>
+        <h2>Fever & Rash in a Child</h2>
+        <p>A 4-year-old with high fever, maculopapular rash, and Koplik spots.</p>
+        <button id="scenarioBtn">Launch Scenario →</button>
+      </div>
+
+      <div class="card">
+        <h3><i class="fas fa-globe-africa"></i> Global Leaderboard</h3>
+        <div id="leaderboardList"><div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading leaderboard...</div></div>
+      </div>
+
+      <div class="subscription">
+        <div><strong>✨ Premium Access</strong><div>Subscribe for TZS 3,000/month</div></div>
+        <button id="subscribeBtn">Subscribe Now →</button>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="card">
+        <div class="disease-header"><span class="disease-name" id="diseaseName">Malaria</span></div>
+        <div class="tabs" id="tabsContainer">
+          <div class="tab active" data-tab="def">Definition</div>
+          <div class="tab" data-tab="sym">Symptoms</div>
+          <div class="tab" data-tab="sign">Signs</div>
+          <div class="tab" data-tab="inv">Investigation</div>
+        </div>
+        <div id="dynamicTabContent" class="disease-content">Loading...</div>
+      </div>
+      <button class="btn" id="joinCompBtn">🏆 Join Weekly Competition</button>
+    </div>
+  </div>
+</div>
+<div id="toastMsg" class="toast"></div>
+
+<script>
+  const API_URL = 'http://localhost:5000';
+
+  // ============ AUTHENTICATION ============
+  function checkAuth() {
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!token) { window.location.href = 'login.html'; return null; }
+    return user;
+  }
+
+  function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+
+  // Refresh user data from server
+  async function refreshUserData() {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/profile`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+      if (data.success) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+        return data.user;
+      }
+    } catch (error) {
+      console.error('Error refreshing user data:', error);
+    }
+    return null;
+  }
+
+  // Update UI with user data
+  async function updateUserUI() {
+    let user = JSON.parse(localStorage.getItem('user') || '{}');
+    // Try to get fresh data from server
+    const freshUser = await refreshUserData();
+    if (freshUser) user = freshUser;
+    
+    document.getElementById('userName').innerText = user.name || 'Doctor';
+    document.getElementById('userPoints').innerText = user.points || 0;
+    document.getElementById('userInitial').innerText = (user.name || 'DR').charAt(0).toUpperCase();
+  }
+
+  const user = checkAuth();
+  if (user) {
+    updateUserUI();
+  }
+
+  // ============ TOAST FUNCTION ============
+  function showToast(message, duration = 3000) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = message;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, duration);
+  }
+
+  // ============ REAL LEADERBOARD FROM DATABASE ============
+  async function loadRealLeaderboard() {
+    try {
+      const response = await fetch(`${API_URL}/api/leaderboard`);
+      const data = await response.json();
+      
+      if (data.success && data.leaderboard.length > 0) {
+        const leaderboardHtml = data.leaderboard.map((leader, index) => `
+          <div class="leader-row">
+            <div class="user-with-country">
+              <div class="user-avatar" style="background: linear-gradient(145deg, #d9e2ef, #cbd5e1);">
+                ${index + 1}
+              </div>
+              <div><strong>${leader.name}</strong></div>
+            </div>
+            <div class="points-badge">${leader.points} pts</div>
+          </div>
+        `).join('');
+        document.getElementById('leaderboardList').innerHTML = leaderboardHtml;
+      } else {
+        document.getElementById('leaderboardList').innerHTML = '<div style="text-align:center; padding:20px;">No users yet</div>';
+      }
+    } catch (error) {
+      console.error('Error loading leaderboard:', error);
+      document.getElementById('leaderboardList').innerHTML = '<div style="text-align:center; padding:20px;">⚠️ Could not load leaderboard</div>';
+    }
+  }
+
+  // ============ DISEASE DATA ============
+  const diseases = {
+    "Malaria": { def: "Malaria is a life-threatening mosquito-borne disease caused by Plasmodium parasites.", sym: "High fever, chills, sweats, headache, nausea.", sign: "Splenomegaly, hepatomegaly, jaundice, anemia.", inv: "Blood smear (thick/thin), Rapid Diagnostic Test (RDT), PCR." },
+    "Typhoid Fever": { def: "Typhoid fever is a bacterial infection caused by Salmonella typhi.", sym: "Step-ladder fever, headache, constipation or diarrhea.", sign: "Abdominal tenderness, bradycardia, rose spots.", inv: "Blood culture, Widal test, stool culture." },
+    "Dengue Fever": { def: "Dengue is a viral illness transmitted by Aedes mosquitoes.", sym: "High fever, severe headache, retro-orbital pain, joint pain.", sign: "Positive tourniquet test, petechiae, plasma leakage.", inv: "NS1 antigen, Dengue IgM/IgG, PCR, platelet count." },
+    "Tuberculosis": { def: "TB is a bacterial infection caused by Mycobacterium tuberculosis.", sym: "Chronic cough, hemoptysis, night sweats, weight loss.", sign: "Crackles on auscultation, lymphadenopathy.", inv: "Chest X-ray, sputum AFB smear, GeneXpert." }
+  };
+  const diseaseNames = Object.keys(diseases);
+  let currentIndex = 0;
+  let currentData = diseases["Malaria"];
+
+  function updateDisease(name) {
+    document.getElementById('diseaseName').innerText = name;
+    currentData = diseases[name];
+    const activeTab = document.querySelector('.tab.active');
+    if (activeTab) showTab(activeTab.dataset.tab);
+  }
+
+  function showTab(tab) { 
+    document.getElementById('dynamicTabContent').innerText = currentData[tab] || currentData.def; 
+  }
+
+  // ============ EVENT LISTENERS ============
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      showTab(tab.dataset.tab);
+    });
+  });
+
+  // Rotate disease every 10 seconds
+  setInterval(() => { 
+    currentIndex = (currentIndex + 1) % diseaseNames.length; 
+    updateDisease(diseaseNames[currentIndex]); 
+  }, 10000);
+
+  // UI Events
+  document.getElementById('hamburgerBtn').onclick = () => document.getElementById('navLinks').classList.toggle('show');
+  document.getElementById('profileBtn').onclick = (e) => { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); };
+  document.onclick = () => document.getElementById('dropdownMenu').classList.remove('show');
+  document.getElementById('logoutBtn').onclick = logout;
+  document.getElementById('subscribeBtn').onclick = () => showToast("✅ Subscription page coming soon!");
+  document.getElementById('joinCompBtn').onclick = () => {
+    window.location.href = 'competition.html';
+    showToast("🏆 Check out the competitions!");
+  };
+  document.getElementById('scenarioBtn').onclick = () => {
+    window.location.href = 'scenarios.html';
+  };
+  document.querySelectorAll('.resource-card').forEach(c => {
+    c.onclick = () => showToast("📚 More features coming soon!");
+  });
+
+  // Search functionality
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    const hintDiv = document.getElementById('searchHint');
+    if (query.length > 1) {
+      const matches = diseaseNames.filter(d => d.toLowerCase().includes(query));
+      if (matches.length > 0) {
+        hintDiv.innerHTML = `🔍 Found: ${matches.slice(0, 3).join(', ')}`;
+        hintDiv.style.cursor = 'pointer';
+        hintDiv.onclick = () => {
+          const matched = matches[0];
+          const idx = diseaseNames.findIndex(d => d === matched);
+          if (idx !== -1) {
+            currentIndex = idx;
+            updateDisease(diseaseNames[currentIndex]);
+            showToast(`📖 Showing: ${matched}`);
+          }
+        };
+      } else {
+        hintDiv.innerHTML = 'No matching disease';
+      }
+    } else {
+      hintDiv.innerHTML = '';
+    }
+  });
+
+  // ============ INITIALIZE ============
+  updateDisease("Malaria");
+  loadRealLeaderboard();
+</script>
+</body>
+</html>

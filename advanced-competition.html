@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Competitions | MedScenario</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #f5f7fc 0%, #eef2f8 100%); font-family: 'Inter', sans-serif; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+        .topnav {
+            display: flex; justify-content: space-between; align-items: center;
+            background: white; padding: 12px 24px; border-radius: 28px;
+            margin-bottom: 28px; flex-wrap: wrap;
+        }
+        .logo { font-weight: 800; background: linear-gradient(135deg, #2563eb, #7c3aed); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.6rem; cursor: pointer; }
+        .navlinks { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
+        .navlinks a { text-decoration: none; color: #4b5563; font-weight: 500; }
+        .navlinks a:hover { color: #2563eb; }
+        .profile { width: 42px; height: 42px; background: linear-gradient(135deg, #2563eb, #7c3aed); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; cursor: pointer; }
+        .nav-right { position: relative; display: flex; gap: 20px; align-items: center; }
+        .dropdown-menu { position: absolute; top: 55px; right: 0; background: white; border-radius: 20px; padding: 12px 0; min-width: 180px; display: none; z-index: 100; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
+        .dropdown-menu.show { display: block; }
+        .dropdown-menu a, .dropdown-menu button { display: block; width: 100%; padding: 10px 20px; text-align: left; background: none; border: none; cursor: pointer; }
+
+        .hero { background: linear-gradient(135deg, #1e40af, #7c3aed); border-radius: 32px; padding: 32px; margin-bottom: 32px; color: white; }
+        .hero h1 { font-size: 2rem; margin-bottom: 8px; }
+        .points-card { background: rgba(255,255,255,0.2); display: inline-block; padding: 8px 20px; border-radius: 40px; margin-top: 16px; }
+
+        .competitions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 24px; margin-top: 24px; }
+        .comp-card { background: white; border-radius: 28px; padding: 24px; transition: all 0.3s; cursor: pointer; border: 1px solid #eef2ff; }
+        .comp-card:hover { transform: translateY(-5px); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15); }
+        .comp-status { display: inline-block; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 700; margin-bottom: 12px; }
+        .status-upcoming { background: #fef3c7; color: #92400e; }
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-ended { background: #e2e8f0; color: #475569; }
+        .prize { font-size: 1.5rem; font-weight: 800; color: #f59e0b; margin: 12px 0; }
+        .join-btn { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 16px; }
+        .join-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; border-radius: 32px; padding: 32px; max-width: 450px; width: 90%; text-align: center; }
+        .modal-content input { width: 100%; padding: 14px; margin: 16px 0; border: 1px solid #e2e8f0; border-radius: 16px; font-size: 1rem; }
+        .modal-content button { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; border: none; padding: 14px; border-radius: 40px; font-weight: 700; cursor: pointer; width: 100%; }
+
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 28px; border-radius: 60px; z-index: 2100; display: none; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="topnav">
+        <div class="logo" onclick="location.href='index.html'"><i class="fas fa-heartbeat"></i> MedScenario</div>
+        <div class="navlinks">
+            <a href="index.html">Home</a>
+            <a href="diseases.html">Diseases</a>
+            <a href="scenarios.html">Scenarios</a>
+            <a href="competition.html">Competitions</a>
+            <a href="advanced-competition.html" class="active">🏆 Tournaments</a>
+            <a href="admin-competition.html">Admin Comp</a>
+        </div>
+        <div class="nav-right">
+            <div class="profile" id="profileBtn"><span id="userInitial">DR</span></div>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="profile.html">My Profile</a>
+                <button id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero">
+        <h1><i class="fas fa-trophy"></i> Premium Tournaments</h1>
+        <p>Join paid competitions, test your skills, and win big prizes!</p>
+        <div class="points-card"><i class="fas fa-star"></i> Your Points: <span id="userPoints">0</span></div>
+    </div>
+
+    <div class="competitions-grid" id="competitionsGrid">
+        <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading tournaments...</div>
+    </div>
+</div>
+
+<!-- Join Modal -->
+<div id="joinModal" class="modal">
+    <div class="modal-content">
+        <i class="fas fa-trophy" style="font-size: 3rem; color: #f59e0b;"></i>
+        <h3 id="modalCompName">Join Competition</h3>
+        <p id="modalCompDetails"></p>
+        <p><strong>Entry Fee: <span id="modalEntryFee">0</span> points</strong></p>
+        <input type="text" id="joinPhone" placeholder="Your Phone Number (for notifications)">
+        <button id="confirmJoinBtn">Confirm & Pay Entry Fee</button>
+        <button id="closeModalBtn" style="background: #6b7280; margin-top: 10px;">Cancel</button>
+    </div>
+</div>
+
+<div id="toastMsg" class="toast"></div>
+
+<script>
+    const API_URL = 'http://localhost:5000';
+    let selectedCompetition = null;
+
+    function getToken() { return localStorage.getItem('token'); }
+
+    function checkAuth() {
+        const token = getToken();
+        if (!token) { window.location.href = 'login.html'; return false; }
+        return true;
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toastMsg');
+        toast.innerText = msg;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+
+    async function loadUserPoints() {
+        try {
+            const response = await fetch(`${API_URL}/api/profile`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById('userPoints').innerText = data.user.points || 0;
+                localStorage.setItem('user', JSON.stringify(data.user));
+            }
+        } catch (error) {
+            console.error('Error loading points:', error);
+        }
+    }
+
+    async function loadCompetitions() {
+        try {
+            const response = await fetch(`${API_URL}/api/advanced-competitions`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            const data = await response.json();
+            const userPoints = JSON.parse(localStorage.getItem('user') || '{}').points || 0;
+
+            if (data.success && data.competitions.length > 0) {
+                const grid = document.getElementById('competitionsGrid');
+                grid.innerHTML = data.competitions.map(comp => `
+                    <div class="comp-card">
+                        <span class="comp-status status-${comp.status}">${comp.status.toUpperCase()}</span>
+                        <h3>${comp.name}</h3>
+                        <p style="color:#6b7280; margin: 8px 0;">${comp.description || 'Test your medical knowledge!'}</p>
+                        <div class="prize">🏆 Prize Pool: ${comp.prizePool} points</div>
+                        <p><strong>Entry Fee:</strong> ${comp.entryFee} points</p>
+                        <p><strong>Questions:</strong> ${comp.totalQuestions}</p>
+                        <p><strong>Participants:</strong> ${comp.participants?.length || 0}</p>
+                        <p><small>⏱️ ${comp.timePerQuestion}s per question | ❤️ 2 lives</small></p>
+                        ${comp.status === 'upcoming' ? 
+                            `<button class="join-btn" onclick="openJoinModal('${comp._id}', '${comp.name}', ${comp.entryFee})" ${userPoints < comp.entryFee ? 'disabled' : ''}>
+                                ${userPoints < comp.entryFee ? 'Insufficient Points' : 'Join Tournament →'}
+                            </button>` : 
+                            comp.status === 'active' ?
+                            `<button class="join-btn" onclick="window.location.href='competition-play.html?id=${comp._id}'">▶ Play Now</button>` :
+                            `<button class="join-btn" disabled style="opacity:0.5">Tournament Ended</button>`
+                        }
+                    </div>
+                `).join('');
+            } else {
+                document.getElementById('competitionsGrid').innerHTML = '<div style="text-align:center; padding:60px;">No active tournaments available</div>';
+            }
+        } catch (error) {
+            console.error('Error loading competitions:', error);
+            document.getElementById('competitionsGrid').innerHTML = '<div style="text-align:center; padding:60px;">Error loading tournaments</div>';
+        }
+    }
+
+    function openJoinModal(id, name, entryFee) {
+        selectedCompetition = { id, name, entryFee };
+        document.getElementById('modalCompName').innerText = name;
+        document.getElementById('modalEntryFee').innerText = entryFee;
+        document.getElementById('modalCompDetails').innerHTML = `Entry fee: ${entryFee} points will be deducted from your account.`;
+        document.getElementById('joinModal').style.display = 'flex';
+    }
+
+    document.getElementById('confirmJoinBtn').onclick = async () => {
+        const phoneNumber = document.getElementById('joinPhone').value;
+        
+        if (!phoneNumber) {
+            showToast('Please enter your phone number');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/api/advanced-competitions/${selectedCompetition.id}/join`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({ phoneNumber })
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                showToast(data.message);
+                document.getElementById('joinModal').style.display = 'none';
+                document.getElementById('joinPhone').value = '';
+                loadUserPoints();
+                loadCompetitions();
+            } else {
+                showToast(data.message || 'Error joining competition');
+            }
+        } catch (error) {
+            showToast('Error joining competition');
+        }
+    };
+
+    document.getElementById('closeModalBtn').onclick = () => {
+        document.getElementById('joinModal').style.display = 'none';
+        document.getElementById('joinPhone').value = '';
+    };
+
+    // UI Events
+    document.getElementById('profileBtn').onclick = (e) => { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); };
+    document.onclick = () => document.getElementById('dropdownMenu').classList.remove('show');
+    document.getElementById('logoutBtn').onclick = logout;
+
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    document.getElementById('userInitial').innerText = (user.name || 'DR').charAt(0).toUpperCase();
+
+    if (checkAuth()) {
+        loadUserPoints();
+        loadCompetitions();
+    }
+</script>
+</body>
+</html>

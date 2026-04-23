@@ -1,0 +1,1641 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>MedScenario | Admin Dashboard</title>
+  <link rel="icon" type="image/png" href="medscenario.png?v=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: linear-gradient(135deg, #f5f7fc 0%, #eef2f8 100%); font-family: 'Inter', sans-serif; color: #1a2c3e; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+    @media (max-width: 768px) { .container { padding: 16px; } }
+
+    .topnav {
+      display: flex; justify-content: space-between; align-items: center; background: white;
+      padding: 12px 24px; border-radius: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      margin-bottom: 28px; position: relative; flex-wrap: wrap;
+    }
+    .logo { font-weight: 800; background: linear-gradient(135deg, #2563eb, #7c3aed); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.6rem; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .navlinks { display: flex; gap: 28px; align-items: center; }
+    .navlinks a { text-decoration: none; font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 8px; color: #4b5563; transition: all 0.2s; }
+    .navlinks a:hover, .navlinks a.active { color: #2563eb; }
+    .hamburger { display: none; font-size: 1.6rem; background: none; border: none; cursor: pointer; color: #1e293b; padding: 8px; }
+    .nav-right { display: flex; align-items: center; gap: 20px; position: relative; }
+    .notification-icon { font-size: 1.3rem; color: #4b5563; cursor: pointer; background: none; border: none; }
+    .profile { width: 42px; height: 42px; background: linear-gradient(135deg, #2563eb, #7c3aed); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; cursor: pointer; }
+    .dropdown-menu { position: absolute; top: 55px; right: 0; background: white; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); padding: 12px 0; min-width: 180px; display: none; z-index: 100; }
+    .dropdown-menu.show { display: block; }
+    .dropdown-menu a { display: block; padding: 10px 20px; text-decoration: none; color: #334155; font-size: 0.85rem; }
+    .dropdown-menu a:hover { background: #f1f5f9; color: #2563eb; }
+    .dropdown-menu button { width: 100%; padding: 10px 20px; text-align: left; background: none; border: none; cursor: pointer; font-size: 0.85rem; color: #334155; }
+    .dropdown-menu button:hover { background: #f1f5f9; color: #2563eb; }
+    @media (max-width: 900px) { .hamburger { display: block; } .navlinks { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; flex-direction: column; padding: 20px; gap: 16px; border-radius: 0 0 28px 28px; z-index: 1000; } .navlinks.show { display: flex; } }
+
+    .admin-hero { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 32px; padding: 32px; margin-bottom: 32px; color: white; }
+    .admin-hero h1 { font-size: 2rem; margin-bottom: 8px; }
+    .admin-tabs { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .admin-tab { padding: 12px 28px; border-radius: 40px; background: white; border: 1px solid #e2e8f0; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .admin-tab.active { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; border-color: transparent; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 32px; }
+    .stat-card { background: white; border-radius: 28px; padding: 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .stat-info h3 { font-size: 0.8rem; color: #6b7280; margin-bottom: 8px; }
+    .stat-number { font-size: 2.5rem; font-weight: 800; color: #2563eb; }
+    .table-card { background: white; border-radius: 28px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .table-card h3 { margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #f0f2f5; }
+    th { color: #6b7280; font-weight: 600; font-size: 0.8rem; }
+    .delete-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; margin-right: 5px; transition: opacity 0.2s; }
+    .delete-btn:hover { opacity: 0.8; }
+    .edit-btn { background: #f59e0b; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; margin-right: 5px; transition: opacity 0.2s; }
+    .edit-btn:hover { opacity: 0.8; }
+    .add-btn { background: #10b981; color: white; border: none; padding: 8px 20px; border-radius: 30px; cursor: pointer; font-weight: 500; transition: opacity 0.2s; }
+    .add-btn:hover { opacity: 0.8; }
+    .approve-btn { background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; margin-right: 5px; }
+    .reject-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; }
+    .modal-content { background: white; max-width: 700px; width: 90%; border-radius: 32px; padding: 28px; max-height: 85vh; overflow-y: auto; }
+    .modal-content input, .modal-content textarea, .modal-content select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-radius: 16px; font-family: 'Inter', sans-serif; }
+    .modal-content button { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; border: none; padding: 12px; border-radius: 40px; font-weight: 600; cursor: pointer; width: 100%; transition: opacity 0.2s; }
+    .modal-content button:hover { opacity: 0.9; }
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 28px; border-radius: 60px; z-index: 2100; display: none; font-size: 0.9rem; white-space: nowrap; }
+    .loading { text-align: center; padding: 40px; color: #2563eb; }
+    .access-denied { text-align: center; padding: 60px; background: white; border-radius: 32px; }
+    .access-denied i { font-size: 4rem; color: #ef4444; margin-bottom: 20px; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .question-item { background: #f8fafc; border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
+    .add-question-form { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
+    .badge-upcoming { background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; }
+    .badge-active { background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; }
+    .badge-ended { background: #e2e8f0; color: #475569; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; }
+    .status-approved { color: #10b981; font-weight: 600; }
+    .status-rejected { color: #ef4444; font-weight: 600; }
+    .status-pending { color: #f59e0b; font-weight: 600; }
+    
+    /* Pagination Styles */
+    .pagination-container { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .pagination-btn { padding: 8px 12px; border: 1px solid #e2e8f0; background: white; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+    .pagination-btn:hover { background: #2563eb; color: white; border-color: #2563eb; }
+    .pagination-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+    .pagination-btn.disabled { opacity: 0.5; cursor: not-allowed; }
+    .search-bar { padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 40px; width: 100%; max-width: 300px; margin-bottom: 20px; font-size: 0.9rem; }
+    .filter-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+    .filter-select { padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 40px; background: white; cursor: pointer; }
+    .bulk-add-area { background: #f0fdf4; padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #bbf7d0; }
+    .bulk-add-area textarea { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 16px; font-family: 'Inter', monospace; font-size: 0.8rem; }
+    .info-badge { display: inline-block; background: #e0e7ff; color: #3730a3; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; margin-left: 10px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="topnav">
+    <div class="logo" onclick="location.href='index.html'"><i class="fas fa-heartbeat"></i> MedScenario</div>
+    <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+    <div class="navlinks" id="navLinks">
+      <a href="home.html">🏠 Home</a>
+      <a href="diseases.html">📚 Diseases</a>
+      <a href="scenarios.html">🩺 Scenarios</a>
+      <a href="competition.html">🏆 Competitions</a>
+      <a href="subscription.html">💎 Subscribe</a>
+      <a href="admin.html" class="active">👑 Admin</a>
+    </div>
+    <div class="nav-right">
+      <button class="notification-icon" id="notificationBtn"><i class="fas fa-bell"></i></button>
+      <div class="profile" id="profileBtn"><span id="userInitial">DR</span></div>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="profile.html">👤 My Profile</a>
+        <button id="logoutBtn">🚪 Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminContent">
+    <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Verifying access...</div>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast"></div>
+
+<script>
+  const API_URL = 'http://localhost:5000';
+  let currentAutoCompId = null;
+  let tempQuestions = [];
+  let currentEditUserId = null;
+  let currentEditDiseaseId = null;
+  let currentEditScenarioId = null;
+  
+  // Pagination variables for diseases
+  let currentDiseasePage = 1;
+  let diseasesPerPage = 15;
+  let allDiseases = [];
+  let diseaseSearchTerm = '';
+  let diseaseSpecialtyFilter = '';
+
+  function getToken() { return localStorage.getItem('token'); }
+
+  function checkAuth() {
+    const token = getToken();
+    if (!token) { window.location.href = 'login.html'; return false; }
+    return true;
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = msg;
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 3000);
+  }
+
+  function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+
+  async function checkAdminAccess() {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/check`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      return data.isAdmin === true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  async function loadStats() {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/stats`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      if (data.success) {
+        document.getElementById('totalUsers').innerText = data.stats.totalUsers;
+        document.getElementById('totalDiseases').innerText = data.stats.totalDiseases;
+        document.getElementById('totalScenarios').innerText = data.stats.totalScenarios;
+        document.getElementById('totalCompetitions').innerText = data.stats.totalCompetitions;
+      }
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  }
+
+  // ============ ENHANCED DISEASE MANAGEMENT WITH PAGINATION ============
+  
+  function renderDiseaseTable() {
+    // Filter diseases based on search and specialty
+    let filteredDiseases = [...allDiseases];
+    
+    if (diseaseSearchTerm) {
+      filteredDiseases = filteredDiseases.filter(d => 
+        d.name.toLowerCase().includes(diseaseSearchTerm.toLowerCase()) ||
+        d.specialty.toLowerCase().includes(diseaseSearchTerm.toLowerCase())
+      );
+    }
+    
+    if (diseaseSpecialtyFilter) {
+      filteredDiseases = filteredDiseases.filter(d => 
+        d.specialty === diseaseSpecialtyFilter
+      );
+    }
+    
+    const totalDiseases = filteredDiseases.length;
+    const totalPages = Math.ceil(totalDiseases / diseasesPerPage);
+    const startIndex = (currentDiseasePage - 1) * diseasesPerPage;
+    const paginatedDiseases = filteredDiseases.slice(startIndex, startIndex + diseasesPerPage);
+    
+    // Update stats display
+    document.getElementById('diseaseStats').innerHTML = `Showing ${startIndex + 1}-${Math.min(startIndex + diseasesPerPage, totalDiseases)} of ${totalDiseases} diseases <span class="info-badge">📊 ${totalDiseases} total</span>`;
+    
+    if (paginatedDiseases.length > 0) {
+      const tableHtml = paginatedDiseases.map(disease => `
+        <tr>
+          <td><strong>${escapeHtml(disease.name)}</strong></td>
+          <td>${escapeHtml(disease.specialty)}</td>
+          <td>${disease.year || 'L5'}</td>
+          <td>
+            <button class="edit-btn" onclick="editDisease('${disease._id}')">✏️ Edit</button>
+            <button class="delete-btn" onclick="deleteDiseaseItem('${disease._id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+      document.getElementById('diseasesTable').innerHTML = tableHtml;
+    } else {
+      document.getElementById('diseasesTable').innerHTML = '<tr><td colspan="4" style="text-align:center; padding:40px;">No diseases found</td></tr>';
+    }
+    
+    // Render pagination controls
+    renderPaginationControls(totalPages);
+  }
+  
+  function renderPaginationControls(totalPages) {
+    let paginationHtml = '<div class="pagination-container">';
+    paginationHtml += `<button class="pagination-btn ${currentDiseasePage === 1 ? 'disabled' : ''}" onclick="changeDiseasePage(${currentDiseasePage - 1})" ${currentDiseasePage === 1 ? 'disabled' : ''}>← Previous</button>`;
+    
+    // Show page numbers
+    const maxButtons = 5;
+    let startPage = Math.max(1, currentDiseasePage - Math.floor(maxButtons / 2));
+    let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+    
+    if (endPage - startPage < maxButtons - 1) {
+      startPage = Math.max(1, endPage - maxButtons + 1);
+    }
+    
+    if (startPage > 1) {
+      paginationHtml += `<button class="pagination-btn" onclick="changeDiseasePage(1)">1</button>`;
+      if (startPage > 2) paginationHtml += `<span class="pagination-btn disabled">...</span>`;
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      paginationHtml += `<button class="pagination-btn ${currentDiseasePage === i ? 'active' : ''}" onclick="changeDiseasePage(${i})">${i}</button>`;
+    }
+    
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) paginationHtml += `<span class="pagination-btn disabled">...</span>`;
+      paginationHtml += `<button class="pagination-btn" onclick="changeDiseasePage(${totalPages})">${totalPages}</button>`;
+    }
+    
+    paginationHtml += `<button class="pagination-btn ${currentDiseasePage === totalPages || totalPages === 0 ? 'disabled' : ''}" onclick="changeDiseasePage(${currentDiseasePage + 1})" ${currentDiseasePage === totalPages || totalPages === 0 ? 'disabled' : ''}>Next →</button>`;
+    paginationHtml += '</div>';
+    
+    document.getElementById('diseasePagination').innerHTML = paginationHtml;
+  }
+  
+  window.changeDiseasePage = (page) => {
+    const totalPages = Math.ceil(allDiseases.filter(d => {
+      let match = true;
+      if (diseaseSearchTerm) {
+        match = match && (d.name.toLowerCase().includes(diseaseSearchTerm.toLowerCase()) || d.specialty.toLowerCase().includes(diseaseSearchTerm.toLowerCase()));
+      }
+      if (diseaseSpecialtyFilter) {
+        match = match && (d.specialty === diseaseSpecialtyFilter);
+      }
+      return match;
+    }).length / diseasesPerPage);
+    
+    if (page >= 1 && page <= totalPages) {
+      currentDiseasePage = page;
+      renderDiseaseTable();
+    }
+  };
+  
+  function updateDiseaseFilters() {
+    diseaseSearchTerm = document.getElementById('diseaseSearch')?.value || '';
+    diseaseSpecialtyFilter = document.getElementById('specialtyFilter')?.value || '';
+    currentDiseasePage = 1;
+    renderDiseaseTable();
+  }
+  
+  // Get unique specialties for filter dropdown
+  function getUniqueSpecialties() {
+    const specialties = [...new Set(allDiseases.map(d => d.specialty))];
+    return specialties.sort();
+  }
+  
+  function updateSpecialtyFilterDropdown() {
+    const specialties = getUniqueSpecialties();
+    const filterSelect = document.getElementById('specialtyFilter');
+    if (filterSelect) {
+      const currentValue = filterSelect.value;
+      filterSelect.innerHTML = '<option value="">All Specialties</option>';
+      specialties.forEach(spec => {
+        filterSelect.innerHTML += `<option value="${spec}" ${currentValue === spec ? 'selected' : ''}>${spec}</option>`;
+      });
+    }
+  }
+  
+  // Bulk add diseases
+  function showBulkAddModal() {
+    const modalHtml = `
+      <div id="bulkAddModal" class="modal" style="display: flex;">
+        <div class="modal-content">
+          <h3>📦 Bulk Add Diseases</h3>
+          <p style="color: #6b7280; font-size: 0.8rem; margin-bottom: 10px;">Enter one disease per line in format: <strong>Name, Specialty, Year, Overview</strong></p>
+          <p style="color: #6b7280; font-size: 0.7rem; margin-bottom: 15px;">Example: Hypertension, Cardiology, L5, High blood pressure condition</p>
+          <textarea id="bulkDiseases" rows="10" placeholder="Hypertension, Cardiology, L5, High blood pressure condition&#10;Diabetes Type 2, Endocrinology, L5, Blood sugar disorder&#10;Asthma, Pulmonology, L5, Chronic airway inflammation"></textarea>
+          <button id="processBulkBtn">📥 Import Diseases</button>
+          <button id="closeModalBtn" style="background: #6b7280; margin-top: 10px;">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    document.getElementById('processBulkBtn').onclick = async () => {
+      const bulkText = document.getElementById('bulkDiseases').value;
+      const lines = bulkText.split('\n').filter(line => line.trim());
+      let successCount = 0;
+      let errorCount = 0;
+      
+      for (const line of lines) {
+        const parts = line.split(',').map(p => p.trim());
+        if (parts.length >= 3) {
+          const diseaseData = {
+            name: parts[0],
+            specialty: parts[1],
+            year: parts[2] || 'L5',
+            overview: parts[3] || `Overview for ${parts[0]}`,
+            symptoms: [],
+            signs: [],
+            ddx: [],
+            ix: [],
+            treatment: '',
+            complication: [],
+            prevention: '',
+            epidemiology: ''
+          };
+          
+          try {
+            const response = await fetch(`${API_URL}/api/diseases`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+              body: JSON.stringify(diseaseData)
+            });
+            const data = await response.json();
+            if (data.success) {
+              successCount++;
+            } else {
+              errorCount++;
+            }
+          } catch (error) {
+            errorCount++;
+          }
+        } else {
+          errorCount++;
+        }
+      }
+      
+      showToast(`✅ Imported ${successCount} diseases, ${errorCount} failed`);
+      document.getElementById('bulkAddModal').remove();
+      await loadDiseases();
+      loadStats();
+    };
+    
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById('bulkAddModal').remove();
+  }
+  
+  // Generate sample diseases for testing
+  function generateSampleDiseases() {
+    const specialties = ['Cardiology', 'Neurology', 'Pulmonology', 'Gastroenterology', 'Nephrology', 'Endocrinology', 'Hematology', 'Infectious Disease', 'Rheumatology', 'Dermatology'];
+    const years = ['L5', 'L6'];
+    const diseaseNames = {
+      'Cardiology': ['Hypertension', 'Coronary Artery Disease', 'Heart Failure', 'Atrial Fibrillation', 'Valvular Heart Disease', 'Myocarditis', 'Pericarditis', 'Cardiomyopathy'],
+      'Neurology': ['Stroke', 'Epilepsy', 'Multiple Sclerosis', 'Parkinson\'s Disease', 'Migraine', 'Alzheimer\'s Disease', 'Meningitis', 'Guillain-Barré Syndrome'],
+      'Pulmonology': ['Asthma', 'COPD', 'Pneumonia', 'Tuberculosis', 'Pulmonary Embolism', 'Lung Cancer', 'Pleural Effusion', 'Interstitial Lung Disease'],
+      'Gastroenterology': ['GERD', 'Peptic Ulcer', 'Crohn\'s Disease', 'Ulcerative Colitis', 'Hepatitis B', 'Cirrhosis', 'Pancreatitis', 'Gallstones'],
+      'Nephrology': ['Chronic Kidney Disease', 'Acute Kidney Injury', 'Glomerulonephritis', 'Nephrotic Syndrome', 'Pyelonephritis', 'Renal Cell Carcinoma', 'Polycystic Kidney Disease'],
+      'Endocrinology': ['Diabetes Type 1', 'Diabetes Type 2', 'Hyperthyroidism', 'Hypothyroidism', 'Cushing\'s Syndrome', 'Addison\'s Disease', 'Osteoporosis'],
+      'Hematology': ['Anemia', 'Leukemia', 'Lymphoma', 'Hemophilia', 'Thalassemia', 'Sickle Cell Disease', 'Thrombocytopenia', 'Multiple Myeloma'],
+      'Infectious Disease': ['HIV/AIDS', 'Malaria', 'Tuberculosis', 'COVID-19', 'Influenza', 'Dengue Fever', 'Typhoid Fever', 'Cholera'],
+      'Rheumatology': ['Rheumatoid Arthritis', 'Osteoarthritis', 'Lupus', 'Gout', 'Scleroderma', 'Ankylosing Spondylitis', 'Sjögren\'s Syndrome'],
+      'Dermatology': ['Psoriasis', 'Eczema', 'Acne', 'Melanoma', 'Basal Cell Carcinoma', 'Urticaria', 'Herpes Zoster', 'Fungal Infections']
+    };
+    
+    let added = 0;
+    const promises = [];
+    
+    for (let i = 0; i < 120; i++) {
+      const specialty = specialties[Math.floor(Math.random() * specialties.length)];
+      const nameList = diseaseNames[specialty] || ['General Disease'];
+      const name = `${nameList[Math.floor(Math.random() * nameList.length)]} ${Math.floor(Math.random() * 100) + 1}`;
+      const year = years[Math.floor(Math.random() * years.length)];
+      
+      const diseaseData = {
+        name: name,
+        specialty: specialty,
+        year: year,
+        overview: `This is a comprehensive overview of ${name}. It covers etiology, pathophysiology, clinical presentation, and management strategies for medical students.`,
+        symptoms: ['Symptom A', 'Symptom B', 'Symptom C'],
+        signs: ['Sign X', 'Sign Y', 'Sign Z'],
+        treatment: `Standard treatment protocol for ${name} includes medication and lifestyle modifications.`
+      };
+      
+      const promise = fetch(`${API_URL}/api/diseases`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+        body: JSON.stringify(diseaseData)
+      }).then(res => res.json()).then(data => {
+        if (data.success) added++;
+      }).catch(() => {});
+      
+      promises.push(promise);
+    }
+    
+    Promise.all(promises).then(() => {
+      showToast(`✅ Generated ${added} sample diseases!`);
+      loadDiseases();
+      loadStats();
+    });
+  }
+  
+  function showAddDiseaseModal() {
+    const modalHtml = `
+      <div id="addDiseaseModal" class="modal" style="display: flex;">
+        <div class="modal-content">
+          <h3>➕ Add New Disease</h3>
+          <input type="text" id="diseaseName" placeholder="Disease Name">
+          <input type="text" id="diseaseSpecialty" placeholder="Specialty (e.g., Cardiology, Neurology)">
+          <select id="diseaseYear">
+            <option value="L5">L5</option>
+            <option value="L6">L6</option>
+          </select>
+          <textarea id="diseaseOverview" rows="3" placeholder="Overview / Description"></textarea>
+          <input type="text" id="diseaseSymptoms" placeholder="Symptoms (comma separated)">
+          <input type="text" id="diseaseSigns" placeholder="Signs (comma separated)">
+          <input type="text" id="diseaseDDX" placeholder="Differential Diagnosis (comma separated)">
+          <input type="text" id="diseaseIx" placeholder="Investigations (comma separated)">
+          <input type="text" id="diseaseTreatment" placeholder="Treatment">
+          <input type="text" id="diseaseComplication" placeholder="Complications (comma separated)">
+          <input type="text" id="diseasePrevention" placeholder="Prevention">
+          <input type="text" id="diseaseEpidemiology" placeholder="Epidemiology">
+          <button id="saveDiseaseBtn">💾 Save Disease</button>
+          <button id="closeModalBtn" style="background: #6b7280; margin-top: 10px;">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    document.getElementById('saveDiseaseBtn').onclick = async () => {
+      const diseaseData = {
+        name: document.getElementById('diseaseName').value,
+        specialty: document.getElementById('diseaseSpecialty').value,
+        year: document.getElementById('diseaseYear').value,
+        overview: document.getElementById('diseaseOverview').value,
+        symptoms: document.getElementById('diseaseSymptoms').value.split(',').map(s => s.trim()).filter(s => s),
+        signs: document.getElementById('diseaseSigns').value.split(',').map(s => s.trim()).filter(s => s),
+        ddx: document.getElementById('diseaseDDX').value.split(',').map(s => s.trim()).filter(s => s),
+        ix: document.getElementById('diseaseIx').value.split(',').map(s => s.trim()).filter(s => s),
+        treatment: document.getElementById('diseaseTreatment').value,
+        complication: document.getElementById('diseaseComplication').value.split(',').map(s => s.trim()).filter(s => s),
+        prevention: document.getElementById('diseasePrevention').value,
+        epidemiology: document.getElementById('diseaseEpidemiology').value
+      };
+      
+      if (!diseaseData.name || !diseaseData.specialty || !diseaseData.overview) {
+        showToast('Please fill required fields (Name, Specialty, Overview)');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}/api/diseases`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+          body: JSON.stringify(diseaseData)
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('✅ Disease added successfully');
+          document.getElementById('addDiseaseModal').remove();
+          loadDiseases();
+          loadStats();
+        } else {
+          showToast('Error adding disease');
+        }
+      } catch (error) {
+        showToast('Error adding disease');
+      }
+    };
+    
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById('addDiseaseModal').remove();
+  }
+
+  async function editDisease(id) {
+    try {
+      const response = await fetch(`${API_URL}/api/diseases/${id}`);
+      const data = await response.json();
+      if (data.success) {
+        const d = data.disease;
+        currentEditDiseaseId = id;
+        
+        const modalHtml = `
+          <div id="editDiseaseModal" class="modal" style="display: flex;">
+            <div class="modal-content">
+              <h3>✏️ Edit Disease</h3>
+              <input type="text" id="diseaseName" value="${escapeHtml(d.name)}" placeholder="Disease Name">
+              <input type="text" id="diseaseSpecialty" value="${escapeHtml(d.specialty)}" placeholder="Specialty">
+              <select id="diseaseYear">
+                <option value="L5" ${d.year === 'L5' ? 'selected' : ''}>L5</option>
+                <option value="L6" ${d.year === 'L6' ? 'selected' : ''}>L6</option>
+              </select>
+              <textarea id="diseaseOverview" rows="3" placeholder="Overview">${escapeHtml(d.overview || '')}</textarea>
+              <input type="text" id="diseaseSymptoms" value="${escapeHtml((d.symptoms || []).join(', '))}" placeholder="Symptoms (comma separated)">
+              <input type="text" id="diseaseSigns" value="${escapeHtml((d.signs || []).join(', '))}" placeholder="Signs (comma separated)">
+              <input type="text" id="diseaseDDX" value="${escapeHtml((d.ddx || []).join(', '))}" placeholder="Differential Diagnosis">
+              <input type="text" id="diseaseIx" value="${escapeHtml((d.ix || []).join(', '))}" placeholder="Investigations">
+              <input type="text" id="diseaseTreatment" value="${escapeHtml(d.treatment || '')}" placeholder="Treatment">
+              <input type="text" id="diseaseComplication" value="${escapeHtml((d.complication || []).join(', '))}" placeholder="Complications">
+              <input type="text" id="diseasePrevention" value="${escapeHtml(d.prevention || '')}" placeholder="Prevention">
+              <input type="text" id="diseaseEpidemiology" value="${escapeHtml(d.epidemiology || '')}" placeholder="Epidemiology">
+              <button id="updateDiseaseBtn">💾 Save Changes</button>
+              <button id="closeModalBtn" style="background: #6b7280; margin-top: 10px;">Cancel</button>
+            </div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        document.getElementById('updateDiseaseBtn').onclick = async () => {
+          const updatedData = {
+            name: document.getElementById('diseaseName').value,
+            specialty: document.getElementById('diseaseSpecialty').value,
+            year: document.getElementById('diseaseYear').value,
+            overview: document.getElementById('diseaseOverview').value,
+            symptoms: document.getElementById('diseaseSymptoms').value.split(',').map(s => s.trim()).filter(s => s),
+            signs: document.getElementById('diseaseSigns').value.split(',').map(s => s.trim()).filter(s => s),
+            ddx: document.getElementById('diseaseDDX').value.split(',').map(s => s.trim()).filter(s => s),
+            ix: document.getElementById('diseaseIx').value.split(',').map(s => s.trim()).filter(s => s),
+            treatment: document.getElementById('diseaseTreatment').value,
+            complication: document.getElementById('diseaseComplication').value.split(',').map(s => s.trim()).filter(s => s),
+            prevention: document.getElementById('diseasePrevention').value,
+            epidemiology: document.getElementById('diseaseEpidemiology').value
+          };
+          
+          try {
+            const response = await fetch(`${API_URL}/api/diseases/${currentEditDiseaseId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+              body: JSON.stringify(updatedData)
+            });
+            const result = await response.json();
+            if (result.success) {
+              showToast('✅ Disease updated successfully');
+              document.getElementById('editDiseaseModal').remove();
+              loadDiseases();
+              loadStats();
+            } else {
+              showToast('Error updating disease');
+            }
+          } catch (error) {
+            showToast('Error updating disease');
+          }
+        };
+        
+        document.getElementById('closeModalBtn').onclick = () => document.getElementById('editDiseaseModal').remove();
+      }
+    } catch (error) {
+      showToast('Error loading disease data');
+    }
+  }
+
+  async function loadDiseases() {
+    try {
+      const response = await fetch(`${API_URL}/api/diseases`);
+      const data = await response.json();
+      if (data.success && data.diseases) {
+        allDiseases = data.diseases;
+        updateSpecialtyFilterDropdown();
+        renderDiseaseTable();
+      } else {
+        document.getElementById('diseasesTable').innerHTML = '<tr><td colspan="4" style="text-align:center; padding:40px;">No diseases found</td></tr>';
+        document.getElementById('diseasePagination').innerHTML = '';
+      }
+    } catch (error) {
+      document.getElementById('diseasesTable').innerHTML = '<tr><td colspan="4" style="text-align:center; padding:40px;">Error loading diseases</td></tr>';
+    }
+  }
+
+  window.deleteDiseaseItem = async (id) => {
+    if (confirm('Delete this disease?')) {
+      try {
+        const response = await fetch(`${API_URL}/api/diseases/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('✅ Disease deleted');
+          loadDiseases();
+          loadStats();
+        }
+      } catch (error) {
+        showToast('Error deleting disease');
+      }
+    }
+  };
+
+  // ============ AUTO COMPETITIONS MANAGEMENT ============
+  
+  function renderTempQuestions() {
+    const container = document.getElementById('questionsList');
+    if (!container) return;
+    if (tempQuestions.length === 0) {
+      container.innerHTML = '<p style="color:#6b7280;">No questions added yet. Add questions below.</p>';
+      return;
+    }
+    container.innerHTML = tempQuestions.map((q, idx) => `
+      <div class="question-item">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+          <strong>Question ${idx + 1}</strong>
+          <button class="delete-btn" onclick="removeTempQuestion(${idx})">Remove</button>
+        </div>
+        <p><strong>Q:</strong> ${escapeHtml(q.text)}</p>
+        <p><strong>Options:</strong> ${q.options.join(' | ')}</p>
+        <p><strong>Correct:</strong> ${escapeHtml(q.correctAnswer)}</p>
+      </div>
+    `).join('');
+  }
+
+  window.removeTempQuestion = (index) => {
+    tempQuestions.splice(index, 1);
+    renderTempQuestions();
+  };
+
+  async function loadAutoCompetitions() {
+    try {
+      const response = await fetch(`${API_URL}/api/auto-competitions`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      if (data.success && data.competitions.length > 0) {
+        const container = document.getElementById('autoCompetitionsList');
+        container.innerHTML = data.competitions.map(comp => `
+          <tr>
+            <td><strong>${escapeHtml(comp.name)}</strong></td>
+            <td>${comp.category || 'weekly'}</td>
+            <td>💰 ${comp.entryFee} pts</td>
+            <td>🏆 ${comp.prizePool} pts</td>
+            <td>📋 ${comp.totalQuestions}</td>
+            <td>⏱️ ${comp.timePerQuestion}s</td>
+            <td>❤️ ${comp.lives || 2}</td>
+            <td><span class="badge-${comp.status}">${comp.status}</span></td>
+            <td>${new Date(comp.scheduledTime).toLocaleString()}</td>
+            <td>
+              <button class="edit-btn" onclick="editAutoCompetition('${comp._id}')">✏️</button>
+              <button class="delete-btn" onclick="deleteAutoCompetition('${comp._id}')">🗑️</button>
+             </td>
+           </tr>
+        `).join('');
+      } else {
+        document.getElementById('autoCompetitionsList').innerHTML = '<tr><td colspan="10" style="text-align:center; padding:40px;">No auto competitions created yet</td></tr>';
+      }
+    } catch (error) {
+      console.error('Error loading auto competitions:', error);
+    }
+  }
+
+  function showCreateAutoCompetitionModal() {
+    tempQuestions = [];
+    currentAutoCompId = null;
+    
+    const modalHtml = `
+      <div id="autoCompModal" class="modal" style="display: flex;">
+        <div class="modal-content">
+          <h3>🏆 Create Automated Competition</h3>
+          
+          <h4 style="margin-top: 10px;">Basic Settings</h4>
+          <input type="text" id="compName" placeholder="Competition Name">
+          <select id="compCategory">
+            <option value="weekly">📅 Weekly Challenge</option>
+            <option value="sponsored">⭐ Sponsored Event</option>
+            <option value="college">🎓 College Battle</option>
+          </select>
+          <textarea id="compDescription" rows="2" placeholder="Description"></textarea>
+          
+          <h4>Competition Rules</h4>
+          <input type="number" id="entryFee" placeholder="Entry Fee (points)" value="500">
+          <input type="number" id="totalQuestions" placeholder="Total Questions" value="20">
+          <input type="number" id="timePerQuestion" placeholder="Seconds per Question" value="60">
+          <input type="number" id="lives" placeholder="Number of Lives" value="2">
+          <input type="number" id="pointsPerQuestion" placeholder="Points per Correct Answer" value="200">
+          <input type="datetime-local" id="scheduledTime">
+          
+          <h4>Questions (Add at least 1)</h4>
+          <div id="questionsList"></div>
+          
+          <div class="add-question-form">
+            <h5>➕ Add Question</h5>
+            <input type="text" id="qText" placeholder="Question text">
+            <input type="text" id="optA" placeholder="Option A">
+            <input type="text" id="optB" placeholder="Option B">
+            <input type="text" id="optC" placeholder="Option C">
+            <input type="text" id="optD" placeholder="Option D">
+            <input type="text" id="correctAnswer" placeholder="Correct Answer (exact text)">
+            <button type="button" class="add-btn" id="addQuestionBtn" style="margin-top: 10px;">+ Add Question</button>
+          </div>
+          
+          <button id="saveCompetitionBtn" style="margin-top: 20px;">💾 Create Competition</button>
+          <button id="closeModalBtn" style="background: #6b7280; margin-top: 10px;">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    renderTempQuestions();
+    
+    document.getElementById('addQuestionBtn').onclick = () => {
+      const options = [
+        document.getElementById('optA').value,
+        document.getElementById('optB').value,
+        document.getElementById('optC').value,
+        document.getElementById('optD').value
+      ].filter(opt => opt.trim() !== '');
+      
+      const question = {
+        text: document.getElementById('qText').value,
+        options: options,
+        correctAnswer: document.getElementById('correctAnswer').value
+      };
+
+      if (!question.text || options.length < 2 || !question.correctAnswer) {
+        showToast('Please fill question text, at least 2 options, and correct answer');
+        return;
+      }
+
+      tempQuestions.push(question);
+      renderTempQuestions();
+      
+      document.getElementById('qText').value = '';
+      document.getElementById('optA').value = '';
+      document.getElementById('optB').value = '';
+      document.getElementById('optC').value = '';
+      document.getElementById('optD').value = '';
+      document.getElementById('correctAnswer').value = '';
+    };
+    
+    document.getElementById('saveCompetitionBtn').onclick = async () => {
+      if (tempQuestions.length === 0) {
+        showToast('Please add at least one question');
+        return;
+      }
+      
+      const competitionData = {
+        name: document.getElementById('compName').value,
+        category: document.getElementById('compCategory').value,
+        description: document.getElementById('compDescription').value,
+        entryFee: parseInt(document.getElementById('entryFee').value),
+        totalQuestions: parseInt(document.getElementById('totalQuestions').value),
+        timePerQuestion: parseInt(document.getElementById('timePerQuestion').value),
+        lives: parseInt(document.getElementById('lives').value),
+        pointsPerQuestion: parseInt(document.getElementById('pointsPerQuestion').value),
+        scheduledTime: document.getElementById('scheduledTime').value
+      };
+
+      if (!competitionData.name || !competitionData.scheduledTime) {
+        showToast('Please fill competition name and scheduled time');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/auto-competitions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+          body: JSON.stringify(competitionData)
+        });
+        const data = await response.json();
+        if (data.success) {
+          currentAutoCompId = data.competition._id;
+          
+          const questionResponse = await fetch(`${API_URL}/api/auto-competitions/${currentAutoCompId}/questions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+            body: JSON.stringify({ questions: tempQuestions })
+          });
+          const questionData = await questionResponse.json();
+          
+          if (questionData.success) {
+            showToast(`✅ Competition created with ${tempQuestions.length} questions!`);
+            document.getElementById('autoCompModal').remove();
+            loadAutoCompetitions();
+            loadStats();
+          } else {
+            showToast('Error saving questions');
+          }
+        } else {
+          showToast('Error creating competition');
+        }
+      } catch (error) {
+        showToast('Error creating competition');
+      }
+    };
+    
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById('autoCompModal').remove();
+  }
+
+  async function editAutoCompetition(id) {
+    try {
+        const response = await fetch(`${API_URL}/api/auto-competitions`, {
+            headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await response.json();
+        const comp = data.competitions.find(c => c._id === id);
+        
+        if (comp) {
+            const qResponse = await fetch(`${API_URL}/api/auto-competitions/${id}/questions`);
+            const qData = await qResponse.json();
+            tempQuestions = qData.success ? qData.questions : [];
+            
+            const modalHtml = `
+                <div id="editCompModal" class="modal" style="display: flex;">
+                    <div class="modal-content" style="max-width: 700px;">
+                        <h3>✏️ Edit Competition</h3>
+                        <p style="color:#ef4444; font-size:0.8rem;">Note: Cannot edit active/ended competitions</p>
+                        
+                        <label>Competition Name:</label>
+                        <input type="text" id="compName" value="${escapeHtml(comp.name)}" placeholder="Competition Name">
+                        
+                        <label>Category:</label>
+                        <select id="compCategory">
+                            <option value="daily" ${comp.category === 'daily' ? 'selected' : ''}>🔥 Daily</option>
+                            <option value="weekly" ${comp.category === 'weekly' ? 'selected' : ''}>📅 Weekly</option>
+                            <option value="specialty" ${comp.category === 'specialty' ? 'selected' : ''}>🎓 Specialty</option>
+                        </select>
+                        
+                        <label>Description:</label>
+                        <textarea id="compDescription" rows="2" placeholder="Description">${escapeHtml(comp.description || '')}</textarea>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div><label>Entry Fee (points):</label><input type="number" id="entryFee" value="${comp.entryFee}" placeholder="Entry Fee"></div>
+                            <div><label>Prize Pool (points):</label><input type="number" id="prizePool" value="${comp.prizePool}" placeholder="Prize Pool"></div>
+                            <div><label>Total Questions:</label><input type="number" id="totalQuestions" value="${comp.totalQuestions}" placeholder="Total Questions"></div>
+                            <div><label>Points per Question:</label><input type="number" id="pointsPerQuestion" value="${comp.pointsPerQuestion}" placeholder="Points per Q"></div>
+                            <div><label>Seconds per Question:</label><input type="number" id="timePerQuestion" value="${comp.timePerQuestion}" placeholder="Time per Q"></div>
+                            <div><label>Lives:</label><input type="number" id="lives" value="${comp.lives || 2}" placeholder="Lives"></div>
+                        </div>
+                        
+                        <label>Scheduled Start Time:</label>
+                        <input type="datetime-local" id="scheduledTime" value="${comp.scheduledTime ? new Date(comp.scheduledTime).toISOString().slice(0, 16) : ''}">
+                        
+                        <h4 style="margin-top: 15px;">📝 Questions (${tempQuestions.length})</h4>
+                        <div id="questionsList" style="max-height: 300px; overflow-y: auto; margin-bottom: 10px;"></div>
+                        
+                        <div class="add-question-form" style="border-top: 1px solid #e2e8f0; padding-top: 15px; margin-top: 10px;">
+                            <h5>➕ Add New Question</h5>
+                            <input type="text" id="qText" placeholder="Question text">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="text" id="optA" placeholder="Option A">
+                                <input type="text" id="optB" placeholder="Option B">
+                                <input type="text" id="optC" placeholder="Option C">
+                                <input type="text" id="optD" placeholder="Option D">
+                            </div>
+                            <input type="text" id="correctAnswer" placeholder="Correct Answer (exact text)">
+                            <button type="button" class="add-btn" id="addQuestionBtn" style="margin-top: 10px;">+ Add Question</button>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button id="updateCompetitionBtn" style="flex: 1; background: linear-gradient(135deg, #2563eb, #7c3aed);">💾 Save All Changes</button>
+                            <button id="closeModalBtn" style="flex: 1; background: #6b7280;">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Render questions function
+            function renderTempQuestionsModal() {
+                const container = document.getElementById('questionsList');
+                if (!container) return;
+                if (tempQuestions.length === 0) {
+                    container.innerHTML = '<p style="color:#6b7280; padding:20px; text-align:center;">No questions yet. Add questions below.</p>';
+                    return;
+                }
+                container.innerHTML = tempQuestions.map((q, idx) => `
+                    <div class="question-item" style="margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>Q${idx + 1}:</strong>
+                            <button class="delete-btn" onclick="removeTempQuestionModal(${idx})" style="padding: 4px 12px;">Remove</button>
+                        </div>
+                        <p style="margin-top: 5px; font-size: 0.85rem;">${escapeHtml(q.text.substring(0, 100))}${q.text.length > 100 ? '...' : ''}</p>
+                        <p style="font-size: 0.75rem; color: #6b7280;">Correct: ${escapeHtml(q.correctAnswer)}</p>
+                    </div>
+                `).join('');
+            }
+            
+            window.removeTempQuestionModal = (index) => {
+                tempQuestions.splice(index, 1);
+                renderTempQuestionsModal();
+            };
+            
+            document.getElementById('addQuestionBtn').onclick = () => {
+                const options = [
+                    document.getElementById('optA').value,
+                    document.getElementById('optB').value,
+                    document.getElementById('optC').value,
+                    document.getElementById('optD').value
+                ].filter(opt => opt.trim() !== '');
+                
+                const question = {
+                    text: document.getElementById('qText').value,
+                    options: options,
+                    correctAnswer: document.getElementById('correctAnswer').value
+                };
+
+                if (!question.text || options.length < 2 || !question.correctAnswer) {
+                    showToast('Please fill question text, at least 2 options, and correct answer');
+                    return;
+                }
+
+                tempQuestions.push(question);
+                renderTempQuestionsModal();
+                
+                document.getElementById('qText').value = '';
+                document.getElementById('optA').value = '';
+                document.getElementById('optB').value = '';
+                document.getElementById('optC').value = '';
+                document.getElementById('optD').value = '';
+                document.getElementById('correctAnswer').value = '';
+            };
+            
+            renderTempQuestionsModal();
+            
+            // FIXED: This now updates BOTH competition info AND questions
+            document.getElementById('updateCompetitionBtn').onclick = async () => {
+                if (tempQuestions.length === 0) {
+                    showToast('⚠️ Please add at least one question');
+                    return;
+                }
+                
+                // Prepare competition data
+                const competitionData = {
+                    name: document.getElementById('compName').value,
+                    category: document.getElementById('compCategory').value,
+                    description: document.getElementById('compDescription').value,
+                    entryFee: parseInt(document.getElementById('entryFee').value),
+                    prizePool: parseInt(document.getElementById('prizePool').value),
+                    totalQuestions: parseInt(document.getElementById('totalQuestions').value),
+                    pointsPerQuestion: parseInt(document.getElementById('pointsPerQuestion').value),
+                    timePerQuestion: parseInt(document.getElementById('timePerQuestion').value),
+                    lives: parseInt(document.getElementById('lives').value),
+                    scheduledTime: document.getElementById('scheduledTime').value
+                };
+                
+                try {
+                    // STEP 1: Update competition basic info using PUT
+                    const updateResponse = await fetch(`${API_URL}/api/auto-competitions/${id}`, {
+                        method: 'PUT',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getToken()}`
+                        },
+                        body: JSON.stringify(competitionData)
+                    });
+                    const updateResult = await updateResponse.json();
+                    
+                    if (!updateResult.success) {
+                        showToast(updateResult.message || 'Error updating competition');
+                        return;
+                    }
+                    
+                    // STEP 2: Update questions
+                    const questionsData = tempQuestions.map((q, idx) => ({
+                        questionNumber: idx + 1,
+                        text: q.text,
+                        options: q.options,
+                        correctAnswer: q.correctAnswer,
+                        points: competitionData.pointsPerQuestion
+                    }));
+                    
+                    const qResponse = await fetch(`${API_URL}/api/auto-competitions/${id}/questions`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getToken()}`
+                        },
+                        body: JSON.stringify({ questions: questionsData })
+                    });
+                    
+                    if (qResponse.ok) {
+                        showToast('✅ Competition updated successfully!');
+                        document.getElementById('editCompModal').remove();
+                        loadAutoCompetitions();
+                        loadStats();
+                    } else {
+                        showToast('Error updating questions');
+                    }
+                } catch (error) {
+                    console.error('Save error:', error);
+                    showToast('Error saving changes');
+                }
+            };
+            
+            document.getElementById('closeModalBtn').onclick = () => document.getElementById('editCompModal').remove();
+        }
+    } catch (error) {
+        console.error('Edit error:', error);
+        showToast('Error loading competition');
+    }
+}
+
+  window.deleteAutoCompetition = async (id) => {
+    if (confirm('Delete this competition? All questions will also be deleted.')) {
+      try {
+        const response = await fetch(`${API_URL}/api/auto-competitions/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('Competition deleted');
+          loadAutoCompetitions();
+          loadStats();
+        } else {
+          showToast('Error deleting competition');
+        }
+      } catch (error) {
+        showToast('Error deleting competition');
+      }
+    }
+  };
+
+  // ============ SCENARIO MANAGEMENT ============
+  
+  function showAddScenarioModal() {
+    const modalHtml = `
+      <div id="addScenarioModal" class="modal" style="display: flex;">
+        <div class="modal-content">
+          <h3>➕ Add New Scenario</h3>
+          <input type="text" id="scenarioTitle" placeholder="Scenario Title">
+          <input type="text" id="scenarioSpecialty" placeholder="Specialty (e.g., Pediatrics, Surgery)">
+          <select id="scenarioDifficulty">
+            <option value="Easy">Easy</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Hard">Hard</option>
+          </select>
+          <select id="scenarioLevel">
+            <option value="L5">L5</option>
+            <option value="L6">L6</option>
+          </select>
+          <input type="number" id="scenarioTimeLimit" placeholder="Time Limit (minutes)" value="10">
+          <textarea id="scenarioDescription" rows="2" placeholder="Short description"></textarea>
+          <textarea id="scenarioCasePresentation" rows="4" placeholder="Case Presentation (full patient case)"></textarea>
+          <input type="text" id="scenarioOptions" placeholder="Options (comma separated: A. Option 1, B. Option 2, C. Option 3, D. Option 4)">
+          <input type="text" id="scenarioCorrectAnswer" placeholder="Correct Answer (exact text as in options)">
+          <textarea id="scenarioExplanation" rows="3" placeholder="Explanation"></textarea>
+          <textarea id="scenarioTopicOverview" rows="3" placeholder="Topic Overview / Learning Points"></textarea>
+          <button id="saveScenarioBtn">💾 Save Scenario</button>
+          <button id="closeModalBtn" style="background: #6b7280; margin-top: 10px;">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    document.getElementById('saveScenarioBtn').onclick = async () => {
+      const optionsRaw = document.getElementById('scenarioOptions').value;
+      const options = optionsRaw.split(',').map(o => o.trim()).filter(o => o);
+      
+      const scenarioData = {
+        title: document.getElementById('scenarioTitle').value,
+        specialty: document.getElementById('scenarioSpecialty').value,
+        difficulty: document.getElementById('scenarioDifficulty').value,
+        level: document.getElementById('scenarioLevel').value,
+        timeLimit: parseInt(document.getElementById('scenarioTimeLimit').value),
+        description: document.getElementById('scenarioDescription').value,
+        casePresentation: document.getElementById('scenarioCasePresentation').value,
+        options: options,
+        correctAnswer: document.getElementById('scenarioCorrectAnswer').value,
+        explanation: document.getElementById('scenarioExplanation').value,
+        topicOverview: document.getElementById('scenarioTopicOverview').value
+      };
+      
+      if (!scenarioData.title || !scenarioData.specialty || !scenarioData.casePresentation || !scenarioData.correctAnswer) {
+        showToast('Please fill required fields (Title, Specialty, Case Presentation, Correct Answer)');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}/api/scenarios`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+          body: JSON.stringify(scenarioData)
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('✅ Scenario added successfully');
+          document.getElementById('addScenarioModal').remove();
+          loadScenarios();
+          loadStats();
+        } else {
+          showToast('Error adding scenario');
+        }
+      } catch (error) {
+        showToast('Error adding scenario');
+      }
+    };
+    
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById('addScenarioModal').remove();
+  }
+
+  async function editScenario(id) {
+    try {
+      const response = await fetch(`${API_URL}/api/scenarios/${id}`);
+      const data = await response.json();
+      if (data.success) {
+        const s = data.scenario;
+        currentEditScenarioId = id;
+        
+        const modalHtml = `
+          <div id="editScenarioModal" class="modal" style="display: flex;">
+            <div class="modal-content">
+              <h3>✏️ Edit Scenario</h3>
+              <input type="text" id="scenarioTitle" value="${escapeHtml(s.title)}" placeholder="Scenario Title">
+              <input type="text" id="scenarioSpecialty" value="${escapeHtml(s.specialty)}" placeholder="Specialty">
+              <select id="scenarioDifficulty">
+                <option value="Easy" ${s.difficulty === 'Easy' ? 'selected' : ''}>Easy</option>
+                <option value="Moderate" ${s.difficulty === 'Moderate' ? 'selected' : ''}>Moderate</option>
+                <option value="Hard" ${s.difficulty === 'Hard' ? 'selected' : ''}>Hard</option>
+              </select>
+              <select id="scenarioLevel">
+                <option value="L5" ${s.level === 'L5' ? 'selected' : ''}>L5</option>
+                <option value="L6" ${s.level === 'L6' ? 'selected' : ''}>L6</option>
+              </select>
+              <input type="number" id="scenarioTimeLimit" value="${s.timeLimit || 10}" placeholder="Time Limit (minutes)">
+              <textarea id="scenarioDescription" rows="2" placeholder="Short description">${escapeHtml(s.description || '')}</textarea>
+              <textarea id="scenarioCasePresentation" rows="4" placeholder="Case Presentation">${escapeHtml(s.casePresentation || '')}</textarea>
+              <input type="text" id="scenarioOptions" value="${escapeHtml((s.options || []).join(', '))}" placeholder="Options (comma separated)">
+              <input type="text" id="scenarioCorrectAnswer" value="${escapeHtml(s.correctAnswer || '')}" placeholder="Correct Answer">
+              <textarea id="scenarioExplanation" rows="3" placeholder="Explanation">${escapeHtml(s.explanation || '')}</textarea>
+              <textarea id="scenarioTopicOverview" rows="3" placeholder="Topic Overview">${escapeHtml(s.topicOverview || '')}</textarea>
+              <button id="updateScenarioBtn">💾 Save Changes</button>
+              <button id="closeModalBtn" style="background: #6b7280; margin-top: 10px;">Cancel</button>
+            </div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        document.getElementById('updateScenarioBtn').onclick = async () => {
+          const optionsRaw = document.getElementById('scenarioOptions').value;
+          const options = optionsRaw.split(',').map(o => o.trim()).filter(o => o);
+          
+          const updatedData = {
+            title: document.getElementById('scenarioTitle').value,
+            specialty: document.getElementById('scenarioSpecialty').value,
+            difficulty: document.getElementById('scenarioDifficulty').value,
+            level: document.getElementById('scenarioLevel').value,
+            timeLimit: parseInt(document.getElementById('scenarioTimeLimit').value),
+            description: document.getElementById('scenarioDescription').value,
+            casePresentation: document.getElementById('scenarioCasePresentation').value,
+            options: options,
+            correctAnswer: document.getElementById('scenarioCorrectAnswer').value,
+            explanation: document.getElementById('scenarioExplanation').value,
+            topicOverview: document.getElementById('scenarioTopicOverview').value
+          };
+          
+          try {
+            const response = await fetch(`${API_URL}/api/scenarios/${currentEditScenarioId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+              body: JSON.stringify(updatedData)
+            });
+            const result = await response.json();
+            if (result.success) {
+              showToast('✅ Scenario updated successfully');
+              document.getElementById('editScenarioModal').remove();
+              loadScenarios();
+              loadStats();
+            } else {
+              showToast('Error updating scenario');
+            }
+          } catch (error) {
+            showToast('Error updating scenario');
+          }
+        };
+        
+        document.getElementById('closeModalBtn').onclick = () => document.getElementById('editScenarioModal').remove();
+      }
+    } catch (error) {
+      showToast('Error loading scenario data');
+    }
+  }
+
+  async function loadScenarios() {
+    try {
+      const response = await fetch(`${API_URL}/api/scenarios`);
+      const data = await response.json();
+      if (data.success && data.scenarios.length > 0) {
+        const tableHtml = data.scenarios.map(scenario => `
+          <tr>
+            <td><strong>${escapeHtml(scenario.title)}</strong></td>
+            <td>${escapeHtml(scenario.specialty)}</td>
+            <td>${scenario.difficulty}</td>
+            <td>${scenario.level || 'L5'}</td>
+            <td>
+              <button class="edit-btn" onclick="editScenario('${scenario._id}')">✏️ Edit</button>
+              <button class="delete-btn" onclick="deleteScenarioItem('${scenario._id}')">Delete</button>
+             </td>
+           </tr>
+        `).join('');
+        document.getElementById('scenariosTable').innerHTML = tableHtml;
+      } else {
+        document.getElementById('scenariosTable').innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;">No scenarios found</td></tr>';
+      }
+    } catch (error) {
+      document.getElementById('scenariosTable').innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;">Error loading scenarios</td></tr>';
+    }
+  }
+
+  window.deleteScenarioItem = async (id) => {
+    if (confirm('Delete this scenario?')) {
+      try {
+        const response = await fetch(`${API_URL}/api/scenarios/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('✅ Scenario deleted');
+          loadScenarios();
+          loadStats();
+        }
+      } catch (error) {
+        showToast('Error deleting scenario');
+      }
+    }
+  };
+
+  // ============ USER MANAGEMENT ============
+  
+  async function loadUsers() {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/users`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      if (data.success && data.users.length > 0) {
+        const tableHtml = data.users.map((user, index) => `
+          <tr>
+            <td>#${index + 1}</td>
+            <td><strong>${escapeHtml(user.name)}</strong></td>
+            <td>${escapeHtml(user.email)}</td>
+            <td class="user-points">${user.points || 0} pts</td>
+            <td>${user.subscription === 'premium' ? '⭐ Premium' : '📖 Free'}</td>
+            <td>${user.isAdmin ? '👑 Admin' : '👤 User'}</td>
+            <td>
+              <button class="edit-btn" onclick="editUser('${user._id}')">✏️ Edit</button>
+              <button class="delete-btn" onclick="deleteUser('${user._id}')">Delete</button>
+             </td>
+           </tr>
+        `).join('');
+        document.getElementById('usersTable').innerHTML = tableHtml;
+      } else {
+        document.getElementById('usersTable').innerHTML = '<tr><td colspan="7" style="text-align:center; padding:40px;">No users found</td></tr>';
+      }
+    } catch (error) {
+      document.getElementById('usersTable').innerHTML = '<tr><td colspan="7" style="text-align:center; padding:40px;">Error loading users</td></tr>';
+    }
+  }
+
+  async function editUser(userId) {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/users`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      const user = data.users.find(u => u._id === userId);
+      
+      if (user) {
+        const modalHtml = `
+          <div id="editUserModal" class="modal" style="display: flex;">
+            <div class="modal-content">
+              <h3>✏️ Edit User: ${escapeHtml(user.name)}</h3>
+              <input type="text" id="userName" value="${escapeHtml(user.name)}" placeholder="Full Name">
+              <input type="email" id="userEmail" value="${escapeHtml(user.email)}" placeholder="Email">
+              <input type="number" id="userPoints" value="${user.points || 0}" placeholder="Points">
+              <select id="userSubscription">
+                <option value="free" ${user.subscription === 'free' ? 'selected' : ''}>Free</option>
+                <option value="premium" ${user.subscription === 'premium' ? 'selected' : ''}>Premium</option>
+              </select>
+              <select id="userIsAdmin">
+                <option value="false" ${!user.isAdmin ? 'selected' : ''}>Regular User</option>
+                <option value="true" ${user.isAdmin ? 'selected' : ''}>Admin</option>
+              </select>
+              <button id="saveUserBtn">💾 Save Changes</button>
+              <button id="closeModalBtn" style="background: #6b7280; margin-top: 10px;">Cancel</button>
+            </div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        document.getElementById('saveUserBtn').onclick = async () => {
+          const updatedData = {
+            name: document.getElementById('userName').value,
+            email: document.getElementById('userEmail').value,
+            points: parseInt(document.getElementById('userPoints').value),
+            subscription: document.getElementById('userSubscription').value,
+            isAdmin: document.getElementById('userIsAdmin').value === 'true'
+          };
+          
+          try {
+            const response = await fetch(`${API_URL}/api/admin/users/${userId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+              body: JSON.stringify(updatedData)
+            });
+            const data = await response.json();
+            if (data.success) {
+              showToast('✅ User updated successfully');
+              document.getElementById('editUserModal').remove();
+              loadUsers();
+              loadStats();
+            } else {
+              showToast('Error updating user');
+            }
+          } catch (error) {
+            showToast('Error updating user');
+          }
+        };
+        
+        document.getElementById('closeModalBtn').onclick = () => document.getElementById('editUserModal').remove();
+      }
+    } catch (error) {
+      showToast('Error loading user data');
+    }
+  }
+
+  window.deleteUser = async (id) => {
+    if (confirm('Delete this user? This action cannot be undone.')) {
+      try {
+        const response = await fetch(`${API_URL}/api/admin/users/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('✅ User deleted');
+          loadUsers();
+          loadStats();
+        } else {
+          showToast('Error deleting user');
+        }
+      } catch (error) {
+        showToast('Error deleting user');
+      }
+    }
+  };
+
+  // ============ PAYMENT MANAGEMENT ============
+  
+  async function loadPendingPayments() {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/pending-payments`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      if (data.success && data.payments && data.payments.length > 0) {
+        const tableHtml = data.payments.map(p => `
+          <tr class="payment-row">
+            <td>${escapeHtml(p.name)}</td>
+            <td>${escapeHtml(p.email)}</td>
+            <td>${escapeHtml(p.pendingPayment.transaction_id)}</td>
+            <td>${escapeHtml(p.pendingPayment.phone_number)}</td>
+            <td>TZS ${p.pendingPayment.amount || 3000}</td>
+            <td>
+              <button class="approve-btn" onclick="approvePayment('${p._id}')">✓ Approve</button>
+              <button class="reject-btn" onclick="rejectPayment('${p._id}')">✗ Reject</button>
+             </td>
+           </tr>
+        `).join('');
+        document.getElementById('pendingPaymentsTable').innerHTML = `<table style="width:100%"><thead><tr><th>Name</th><th>Email</th><th>Transaction ID</th><th>Phone</th><th>Amount</th><th>Actions</th></tr></thead><tbody>${tableHtml}</tbody></table>`;
+      } else {
+        document.getElementById('pendingPaymentsTable').innerHTML = '<div style="text-align:center; padding:40px;">No pending payments</div>';
+      }
+    } catch (error) {
+      document.getElementById('pendingPaymentsTable').innerHTML = '<div style="text-align:center; padding:40px;">Error loading payments</div>';
+    }
+  }
+
+  async function loadPaymentHistory() {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/payment-history`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      if (data.success && data.payments && data.payments.length > 0) {
+        const tableHtml = data.payments.map(p => `
+          <tr>
+            <td>${escapeHtml(p.name)}</td>
+            <td>${escapeHtml(p.transaction_id)}</td>
+          
+            <td>${escapeHtml(p.phone_number)}</td>
+            <td>${escapeHtml(p.phone_name)}</td>
+
+            <td>TZS ${p.amount}</td>
+            <td class="${p.status === 'approved' ? 'status-approved' : 'status-rejected'}">${p.status === 'approved' ? '✅ Approved' : '❌ Rejected'}</td>
+            <td>${new Date(p.date).toLocaleString()}</td>
+          </tr>
+        `).join('');
+        document.getElementById('paymentsHistoryTable').innerHTML = `<table style="width:100%"><thead><tr><th>User</th><th>Transaction ID</th><th>Phone</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>${tableHtml}</tbody></table>`;
+      } else {
+        document.getElementById('paymentsHistoryTable').innerHTML = '<div style="text-align:center; padding:40px;">No payment history found</div>';
+      }
+    } catch (error) {
+      console.error('Error loading payment history:', error);
+      document.getElementById('paymentsHistoryTable').innerHTML = '<div style="text-align:center; padding:40px;">Error loading payment history</div>';
+    }
+  }
+
+  async function approvePayment(userId) {
+    if (confirm('Approve this payment and upgrade user to premium?')) {
+      try {
+        const response = await fetch(`${API_URL}/api/admin/approve-payment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+          body: JSON.stringify({ userId })
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast(data.message || 'Payment approved');
+          loadPendingPayments();
+          loadPaymentHistory();
+          loadUsers();
+          loadStats();
+        } else {
+          showToast('Error approving payment');
+        }
+      } catch (error) {
+        showToast('Error approving payment');
+      }
+    }
+  }
+
+  async function rejectPayment(userId) {
+    if (confirm('Reject this payment request?')) {
+      try {
+        const response = await fetch(`${API_URL}/api/admin/reject-payment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+          body: JSON.stringify({ userId })
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('Payment request rejected');
+          loadPendingPayments();
+          loadPaymentHistory();
+        } else {
+          showToast('Error rejecting payment');
+        }
+      } catch (error) {
+        showToast('Error rejecting payment');
+      }
+    }
+  }
+
+  function switchTab(tabName) {
+    document.querySelectorAll('.section').forEach(section => {
+      section.classList.remove('active');
+    });
+    document.getElementById(`${tabName}Section`).classList.add('active');
+    
+    document.querySelectorAll('.admin-tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    if (event && event.target) event.target.classList.add('active');
+  }
+
+  async function loadAdminDashboard() {
+    const isAdmin = await checkAdminAccess();
+    
+    if (!isAdmin) {
+      document.getElementById('adminContent').innerHTML = `
+        <div class="access-denied">
+          <i class="fas fa-shield-alt"></i>
+          <h2>Access Denied</h2>
+          <p>You don't have permission to access the admin dashboard.</p>
+          <button onclick="location.href='index.html'" style="margin-top: 20px; padding: 10px 24px; background: #2563eb; color: white; border: none; border-radius: 40px; cursor: pointer;">Return to Home</button>
+        </div>
+      `;
+      return false;
+    }
+    
+    document.getElementById('adminContent').innerHTML = `
+      <div class="admin-hero">
+        <h1><i class="fas fa-user-shield"></i> Admin Dashboard</h1>
+        <p>Welcome, Administrator! Manage your platform from here.</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-info"><h3>Total Users</h3><div class="stat-number" id="totalUsers">-</div></div><div class="stat-icon"><i class="fas fa-users"></i></div></div>
+        <div class="stat-card"><div class="stat-info"><h3>Total Diseases</h3><div class="stat-number" id="totalDiseases">-</div></div><div class="stat-icon"><i class="fas fa-book"></i></div></div>
+        <div class="stat-card"><div class="stat-info"><h3>Total Scenarios</h3><div class="stat-number" id="totalScenarios">-</div></div><div class="stat-icon"><i class="fas fa-stethoscope"></i></div></div>
+        <div class="stat-card"><div class="stat-info"><h3>Total Competitions</h3><div class="stat-number" id="totalCompetitions">-</div></div><div class="stat-icon"><i class="fas fa-trophy"></i></div></div>
+      </div>
+
+      <div class="table-card">
+        <h3><i class="fas fa-clock"></i> Pending Payment Requests</h3>
+        <div id="pendingPaymentsTable"><div class="loading">Loading...</div></div>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchTab('autocomps')">🤖 Auto Comps</button>
+        <button class="admin-tab" onclick="switchTab('diseases')">📚 Diseases</button>
+        <button class="admin-tab" onclick="switchTab('scenarios')">🩺 Scenarios</button>
+        <button class="admin-tab" onclick="switchTab('users')">👥 Users</button>
+        <button class="admin-tab" onclick="switchTab('payments')">💰 Payments</button>
+      </div>
+
+      <div id="autocompsSection" class="section active table-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3><i class="fas fa-robot"></i> Automated Competitions</h3>
+          <button class="add-btn" onclick="showCreateAutoCompetitionModal()"><i class="fas fa-plus"></i> Create Auto Comp</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table style="width:100%; min-width: 1000px;">
+            <thead>
+              <tr><th>Name</th><th>Category</th><th>Entry Fee</th><th>Prize Pool</th><th>Questions</th><th>Time/Q</th><th>Lives</th><th>Status</th><th>Start Time</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="autoCompetitionsList"><tr><td colspan="10"><div class="loading">Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+        <div style="margin-top: 20px; padding: 16px; background: #fef3c7; border-radius: 16px;">
+          <p style="font-size: 0.8rem; color: #92400e;"><i class="fas fa-info-circle"></i> <strong>How Auto Comps Work:</strong> Competitions start automatically at the scheduled time. Players get <strong>lives</strong> (wrong answers cost a life). Last player standing wins the <strong>prize pool</strong> (all entry fees combined). Questions appear one by one with a timer.</p>
+        </div>
+      </div>
+
+      <div id="diseasesSection" class="section table-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+          <h3><i class="fas fa-book"></i> Manage Diseases <span id="diseaseStats" class="info-badge"></span></h3>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="add-btn" onclick="showAddDiseaseModal()"><i class="fas fa-plus"></i> Add Disease</button>
+            <button class="add-btn" onclick="showBulkAddModal()" style="background: #8b5cf6;"><i class="fas fa-upload"></i> Bulk Import</button>
+            <button class="add-btn" onclick="generateSampleDiseases()" style="background: #ec489a;"><i class="fas fa-flask"></i> Generate 120+ Samples</button>
+          </div>
+        </div>
+        
+        <div class="filter-bar">
+          <input type="text" id="diseaseSearch" class="search-bar" placeholder="🔍 Search by name or specialty..." onkeyup="updateDiseaseFilters()">
+          <select id="specialtyFilter" class="filter-select" onchange="updateDiseaseFilters()">
+            <option value="">All Specialties</option>
+          </select>
+          <select id="perPageSelect" class="filter-select" onchange="diseasesPerPage = parseInt(this.value); currentDiseasePage = 1; renderDiseaseTable()">
+            <option value="10">10 per page</option>
+            <option value="15" selected>15 per page</option>
+            <option value="25">25 per page</option>
+            <option value="50">50 per page</option>
+            <option value="100">100 per page</option>
+          </select>
+        </div>
+        
+        <div style="overflow-x: auto;">
+          <table style="width:100%">
+            <thead><tr><th>Name</th><th>Specialty</th><th>Year</th><th>Actions</th></tr></thead>
+            <tbody id="diseasesTable"><tr><td colspan="4"><div class="loading">Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+        <div id="diseasePagination"></div>
+        
+        <div class="bulk-add-area" style="margin-top: 20px;">
+          <p style="font-size: 0.8rem; color: #166534;"><i class="fas fa-lightbulb"></i> <strong>Pro Tip:</strong> Use "Generate 120+ Samples" to populate the database with realistic disease data for testing. You can also bulk import using CSV format (Name, Specialty, Year, Overview).</p>
+        </div>
+      </div>
+
+      <div id="scenariosSection" class="section table-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3><i class="fas fa-stethoscope"></i> Manage Scenarios</h3>
+          <button class="add-btn" onclick="showAddScenarioModal()"><i class="fas fa-plus"></i> Add Scenario</button>
+        </div>
+        <table style="width:100%">
+          <thead><tr><th>Title</th><th>Specialty</th><th>Difficulty</th><th>Level</th><th>Actions</th></tr></thead>
+          <tbody id="scenariosTable"><tr><td colspan="5"><div class="loading">Loading...</div></td></tr></tbody>
+        </table>
+      </div>
+
+      <div id="usersSection" class="section table-card">
+        <h3><i class="fas fa-users"></i> Manage Users</h3>
+        <div style="overflow-x: auto;">
+          <table style="width:100%; min-width: 800px;">
+            <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Points</th><th>Subscription</th><th>Role</th><th>Actions</th></tr></thead>
+            <tbody id="usersTable"><tr><td colspan="7"><div class="loading">Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="paymentsSection" class="section table-card">
+        <h3><i class="fas fa-money-bill-wave"></i> Payment History</h3>
+        <div id="paymentsHistoryTable"><div class="loading">Loading...</div></div>
+      </div>
+    `;
+
+    loadStats();
+    loadPendingPayments();
+    loadPaymentHistory();
+    loadAutoCompetitions();
+    loadDiseases();
+    loadScenarios();
+    loadUsers();
+  }
+
+  // Event Listeners
+  document.getElementById('hamburgerBtn').onclick = () => document.getElementById('navLinks').classList.toggle('show');
+  document.getElementById('profileBtn').onclick = (e) => { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); };
+  document.onclick = () => document.getElementById('dropdownMenu').classList.remove('show');
+  document.getElementById('logoutBtn').onclick = logout;
+  document.getElementById('notificationBtn').onclick = () => showToast("🔔 Admin notifications");
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  document.getElementById('userInitial').innerText = (user.name || 'DR').charAt(0).toUpperCase();
+
+  if (checkAuth()) {
+    loadAdminDashboard();
+  }
+</script>
+</body>
+</html>

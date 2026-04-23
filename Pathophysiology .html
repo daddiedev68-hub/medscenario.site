@@ -1,0 +1,674 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MedScenario | Pathophysiology — Coming Soon</title>
+    <link rel="icon" type="image/png" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 13c-2.33 0-4.31-1.46-5.11-3.5h10.22c-.8 2.04-2.78 3.5-5.11 3.5z'/%3E%3C/svg%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
+            min-height: 100vh;
+            color: #1a2a3a;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: color 0.2s;
+            padding: 6px 0;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .nav-links a.active {
+            color: #2563eb;
+            font-weight: 600;
+            border-bottom: 2px solid #2563eb;
+        }
+
+        .profile {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #2563eb;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 12px 20px;
+            }
+            .nav-links {
+                display: none;
+            }
+            .hamburger {
+                display: block;
+            }
+            .nav-links.show {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 20px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                gap: 16px;
+                z-index: 999;
+            }
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        /* Coming Soon Hero */
+        .coming-soon-card {
+            background: white;
+            border-radius: 48px;
+            padding: 60px 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(37, 99, 235, 0.1);
+        }
+
+        .icon-wrapper {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #2563eb10, #7c3aed10);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .icon-wrapper i {
+            font-size: 48px;
+            color: #2563eb;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b, #2563eb);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto 32px;
+        }
+
+        .progress-bar-container {
+            max-width: 400px;
+            margin: 32px auto;
+            background: #e2e8f0;
+            border-radius: 100px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 65%;
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            border-radius: 100px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; width: 65%; }
+            50% { opacity: 1; width: 68%; }
+            100% { opacity: 0.7; width: 65%; }
+        }
+
+        .info-text {
+            color: #475569;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .info-text i {
+            color: #2563eb;
+            margin-right: 6px;
+        }
+
+        /* Cards Grid */
+        .section-title {
+            text-align: left;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 48px 0 24px;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .simple-card {
+            background: white;
+            border-radius: 28px;
+            padding: 28px;
+            transition: all 0.25s;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+        }
+
+        .simple-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px -12px rgba(0, 0, 0, 0.1);
+            border-color: #2563eb30;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: #eef2ff;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .card-icon i {
+            font-size: 24px;
+            color: #2563eb;
+        }
+
+        .simple-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        .simple-card p {
+            color: #64748b;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #2563eb;
+            margin-top: 12px;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast i {
+            font-size: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 60px;
+        }
+
+        button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Dropdown */
+        .dropdown-menu {
+            position: absolute;
+            top: 60px;
+            right: 32px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.15);
+            padding: 8px 0;
+            min-width: 180px;
+            display: none;
+            z-index: 200;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-menu a,
+        .dropdown-menu button {
+            width: 100%;
+            padding: 12px 20px;
+            text-align: left;
+            background: none;
+            border: none;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: block;
+            color: #334155;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .dropdown-menu a:hover,
+        .dropdown-menu button:hover {
+            background: #f1f5f9;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="dashboard.html" class="logo">
+        <i class="fas fa-heartbeat"></i> MedScenario
+    </a>
+    <button class="hamburger" id="hamburgerBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="nav-links" id="navLinks">
+        <a href="index.html">🏠 Home</a>
+        <a href="diseases.html">📚 Diseases</a>
+        <a href="pathophysiology.html" class="active">🧬 Pathophysiology</a>
+        <a href="scenarios.html">🩺 Scenarios</a>
+        <a href="competition.html">🏆 Competitions</a>
+        <a href="subscription.html">💎 Subscribe</a>
+    </div>
+    <div class="profile" id="profileBtn">
+        <span id="userInitial">DR</span>
+    </div>
+    <div class="dropdown-menu" id="dropdownMenu">
+        <a href="profile.html">👤 My Profile</a>
+        <button id="logoutBtn">🚪 Logout</button>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Coming Soon Hero Section -->
+    <div class="coming-soon-card">
+        <div class="icon-wrapper">
+            <i class="fas fa-microscope"></i>
+        </div>
+        <h1>Pathophysiology Library</h1>
+        <p class="subtitle">Understanding disease mechanisms — coming very soon</p>
+        
+        <div class="progress-bar-container">
+            <div class="progress-bar"></div>
+        </div>
+        
+        <p class="info-text">
+            <i class="fas fa-flask"></i> We're curating detailed pathophysiological content
+        </p>
+        <p class="info-text">
+            <i class="fas fa-dna"></i> Molecular to clinical level explanations
+        </p>
+    </div>
+
+    <!-- Preview Cards (all show coming soon) -->
+    <div class="section-title">
+        <i class="fas fa-stethoscope" style="color: #2563eb;"></i>
+        <span>Preview by Specialty</span>
+    </div>
+
+    <div class="cards-grid">
+        <div class="simple-card" data-feature="Internal Medicine Pathophysiology">
+            <div class="card-icon">
+                <i class="fas fa-heartbeat"></i>
+            </div>
+            <h3>Internal Medicine</h3>
+            <p>Hypertension, diabetes, cardiovascular diseases — complete mechanism breakdowns</p>
+            <span class="badge"><i class="fas fa-clock"></i> Coming Soon</span>
+        </div>
+
+        <div class="simple-card" data-feature="Surgery Pathophysiology">
+            <div class="card-icon">
+                <i class="fas fa-scalpel"></i>
+            </div>
+            <h3>Surgery</h3>
+            <p>Appendicitis, bowel obstruction, trauma — pathophysiological cascades</p>
+            <span class="badge"><i class="fas fa-clock"></i> Coming Soon</span>
+        </div>
+
+        <div class="simple-card" data-feature="OBGY Pathophysiology">
+            <div class="card-icon">
+                <i class="fas fa-female"></i>
+            </div>
+            <h3>OBGYN</h3>
+            <p>Ectopic pregnancy, preeclampsia, PCOS — hormone and tissue level changes</p>
+            <span class="badge"><i class="fas fa-clock"></i> Coming Soon</span>
+        </div>
+
+        <div class="simple-card" data-feature="Pediatrics Pathophysiology">
+            <div class="card-icon">
+                <i class="fas fa-child"></i>
+            </div>
+            <h3>Pediatrics</h3>
+            <p>Kawasaki disease, bronchiolitis, genetic disorders — pediatric mechanisms</p>
+            <span class="badge"><i class="fas fa-clock"></i> Coming Soon</span>
+        </div>
+
+        <div class="simple-card" data-feature="Neurology Pathophysiology">
+            <div class="card-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h3>Neurology</h3>
+            <p>Stroke, Alzheimer's, epilepsy — neuronal pathway explanations</p>
+            <span class="badge"><i class="fas fa-clock"></i> Coming Soon</span>
+        </div>
+
+        <div class="simple-card" data-feature="Infectious Disease Pathophysiology">
+            <div class="card-icon">
+                <i class="fas fa-virus"></i>
+            </div>
+            <h3>Infectious Disease</h3>
+            <p>Sepsis, pneumonia, meningitis — host-pathogen interactions</p>
+            <span class="badge"><i class="fas fa-clock"></i> Coming Soon</span>
+        </div>
+    </div>
+
+    <div class="footer">
+        <i class="fas fa-flask"></i> MedScenario Pathophysiology Module — Launching with 50+ disease mechanisms
+    </div>
+</div>
+
+<div id="toastMsg" class="toast">
+    <i class="fas fa-hourglass-half"></i>
+    <span>Coming soon! We're preparing detailed content.</span>
+</div>
+
+<script>
+    // Simple "Coming Soon" Toast Function (only for pathophysiology content)
+    function showComingSoon(featureName = null) {
+        const toast = document.getElementById('toastMsg');
+        const toastSpan = toast.querySelector('span');
+        
+        if (featureName) {
+            toastSpan.innerHTML = `🚧 "${featureName}" — Coming soon! We're preparing detailed content.`;
+        } else {
+            toastSpan.innerHTML = `🚧 Coming soon! We're building the Pathophysiology Library.`;
+        }
+        
+        toast.style.display = 'flex';
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.style.display = 'none';
+                toast.style.opacity = '1';
+            }, 300);
+        }, 2500);
+    }
+
+    // ============ MOBILE MENU ============
+    function initMobileMenu() {
+        const hamburger = document.getElementById('hamburgerBtn');
+        const navLinks = document.getElementById('navLinks');
+        
+        if (hamburger && navLinks) {
+            hamburger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navLinks.classList.toggle('show');
+            });
+            
+            // Close mobile menu when clicking a link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('show');
+                });
+            });
+            
+            document.addEventListener('click', function(event) {
+                if (navLinks.classList.contains('show')) {
+                    if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+                        navLinks.classList.remove('show');
+                    }
+                }
+            });
+        }
+    }
+
+    // ============ PROFILE DROPDOWN ============
+    function initProfileDropdown() {
+        const profileBtn = document.getElementById('profileBtn');
+        const dropdown = document.getElementById('dropdownMenu');
+        
+        if (profileBtn && dropdown) {
+            profileBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('show');
+            });
+        }
+    }
+
+    // ============ LOGOUT ============
+    function initLogout() {
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = 'login.html';
+            });
+        }
+    }
+
+    // ============ SET USER INITIAL ============
+    function setUserInitial() {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const userInitialSpan = document.getElementById('userInitial');
+        if (userInitialSpan) {
+            userInitialSpan.innerText = (user.name || 'DR').charAt(0).toUpperCase();
+        }
+    }
+
+    // ============ PATHOPHYSIOLOGY COMING SOON HANDLERS ============
+    // Only make pathophysiology cards show "coming soon" - navigation links work normally
+    function initPathoComingSoon() {
+        // All preview cards - these show coming soon
+        const cards = document.querySelectorAll('.simple-card');
+        cards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const feature = card.getAttribute('data-feature') || card.querySelector('h3')?.innerText || 'this feature';
+                showComingSoon(feature);
+            });
+        });
+
+        // Also any "Coming Soon" badges or buttons inside the pathophysiology section
+        const comingSoonElements = document.querySelectorAll('.badge, .coming-soon-card .info-text');
+        comingSoonElements.forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showComingSoon('Pathophysiology Content');
+            });
+        });
+    }
+
+    // ============ ENSURE NAVIGATION LINKS WORK ============
+    // The navigation links already have proper href attributes, so they work automatically
+    // This function ensures no conflicting event listeners are added
+    function protectNavigationLinks() {
+        const navLinks = document.querySelectorAll('.nav-links a');
+        navLinks.forEach(link => {
+            // Remove any potential conflicting listeners by adding a safety check
+            link.addEventListener('click', (e) => {
+                // Let the default navigation happen
+                // Just ensure mobile menu closes
+                const navLinksContainer = document.getElementById('navLinks');
+                if (navLinksContainer) {
+                    navLinksContainer.classList.remove('show');
+                }
+            });
+        });
+        
+        // Logo link protection
+        const logo = document.querySelector('.logo');
+        if (logo) {
+            logo.addEventListener('click', () => {
+                // Allow normal navigation
+                const navLinksContainer = document.getElementById('navLinks');
+                if (navLinksContainer) {
+                    navLinksContainer.classList.remove('show');
+                }
+            });
+        }
+    }
+
+    // ============ TOAST ENHANCEMENT ============
+    function enhanceToast() {
+        const toast = document.getElementById('toastMsg');
+        if (toast) {
+            toast.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+    }
+
+    // ============ CHECK AUTH ============
+    function checkAuth() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            // Redirect to login if not authenticated
+            window.location.href = 'login.html';
+            return false;
+        }
+        return true;
+    }
+
+    // ============ NOTIFICATION BUTTON (optional) ============
+    function addNotificationButton() {
+        // Check if notification button already exists
+        if (!document.querySelector('.notification-icon')) {
+            const profileBtn = document.querySelector('.profile');
+            if (profileBtn && profileBtn.parentNode) {
+                const notifBtn = document.createElement('button');
+                notifBtn.className = 'notification-icon';
+                notifBtn.style.cssText = 'background:none; border:none; font-size:1.2rem; cursor:pointer; color:#4a5568; margin-right:12px; position:relative;';
+                notifBtn.innerHTML = '<i class="fas fa-bell"></i>';
+                notifBtn.addEventListener('click', () => showComingSoon('Notifications'));
+                profileBtn.parentNode.insertBefore(notifBtn, profileBtn);
+            }
+        }
+    }
+
+    // Initialize everything
+    document.addEventListener('DOMContentLoaded', () => {
+        // Check authentication first
+        if (!checkAuth()) return;
+        
+        initMobileMenu();
+        initProfileDropdown();
+        initLogout();
+        setUserInitial();
+        initPathoComingSoon();
+        protectNavigationLinks();
+        enhanceToast();
+        addNotificationButton();
+    });
+</script>
+</body>
+</html>

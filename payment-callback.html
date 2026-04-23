@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Status | MedScenario</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fc 0%, #eef2f8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 32px;
+            padding: 48px;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        .pending { color: #f59e0b; }
+        .loading { color: #2563eb; }
+        h1 { margin-bottom: 16px; }
+        p { margin-bottom: 24px; color: #6b7280; }
+        .btn {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="paymentStatus">
+        <div class="spinner"></div>
+        <h1 class="loading">Processing Payment...</h1>
+        <p>Please wait while we verify your payment.</p>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderTrackingId = urlParams.get('OrderTrackingId');
+        const orderMerchantReference = urlParams.get('OrderMerchantReference');
+        
+        async function checkPaymentStatus() {
+            if (!orderTrackingId) {
+                document.getElementById('paymentStatus').innerHTML = `
+                    <h1 class="error">❌ Invalid Response</h1>
+                    <p>No payment reference found.</p>
+                    <a href="subscription.html" class="btn">Back to Subscription</a>
+                `;
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/api/payment/status/${orderTrackingId}`);
+                const data = await response.json();
+                
+                console.log('Payment status:', data);
+                
+                if (data.payment_status_description === 'Completed' || data.status === 'COMPLETED') {
+                    document.getElementById('paymentStatus').innerHTML = `
+                        <h1 class="success">✅ Payment Successful!</h1>
+                        <p>Your account has been upgraded to Premium.</p>
+                        <p>You now have unlimited access to all scenarios, diseases, and competitions.</p>
+                        <a href="index.html" class="btn">Go to Dashboard</a>
+                    `;
+                } else if (data.payment_status_description === 'Pending' || data.status === 'PENDING') {
+                    document.getElementById('paymentStatus').innerHTML = `
+                        <h1 class="pending">⏳ Payment Pending</h1>
+                        <p>Your payment is being processed.</p>
+                        <p>You will receive a confirmation email once completed.</p>
+                        <a href="index.html" class="btn">Return to Dashboard</a>
+                    `;
+                } else {
+                    document.getElementById('paymentStatus').innerHTML = `
+                        <h1 class="error">❌ Payment Failed</h1>
+                        <p>Your payment could not be processed.</p>
+                        <p>Please try again or contact support.</p>
+                        <a href="subscription.html" class="btn">Try Again</a>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error checking payment:', error);
+                document.getElementById('paymentStatus').innerHTML = `
+                    <h1 class="error">❌ Error</h1>
+                    <p>Could not verify payment status.</p>
+                    <p>Please check your email for confirmation or contact support.</p>
+                    <a href="index.html" class="btn">Go to Dashboard</a>
+                `;
+            }
+        }
+        
+        checkPaymentStatus();
+    </script>
+</body>
+</html>

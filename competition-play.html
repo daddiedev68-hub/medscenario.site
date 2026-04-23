@@ -1,0 +1,652 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedScenario | Competition Play - Live Battle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header Stats */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 60px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .stat {
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .stat-value {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #f59e0b;
+            margin-left: 6px;
+        }
+        
+        /* Question Card */
+        .question-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 48px;
+            padding: 40px;
+            margin-bottom: 24px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .timer-bar {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        
+        .timer-progress {
+            background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
+            height: 100%;
+            width: 100%;
+            transition: width 0.1s linear;
+            border-radius: 4px;
+        }
+        
+        .timer-text {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            line-height: 1.4;
+            color: #0f172a;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            padding: 16px 20px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: #1e293b;
+        }
+        
+        .option:hover:not(.disabled) {
+            background: #e0e7ff;
+            border-color: #6366f1;
+            transform: translateX(4px);
+        }
+        
+        .option.correct {
+            background: #dcfce7;
+            border-color: #10b981;
+        }
+        
+        .option.wrong {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+        
+        .disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .lives {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .heart {
+            font-size: 1.5rem;
+        }
+        
+        .heart.lost {
+            opacity: 0.2;
+            filter: grayscale(1);
+        }
+        
+        .next-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: all 0.25s;
+            box-shadow: 0 8px 20px -8px #7c3aed;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px -10px #7c3aed;
+        }
+        
+        /* Result Cards */
+        .result-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 48px;
+            padding: 48px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .result-score {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 20px 0;
+        }
+        
+        .winner-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 60px;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .prize-amount {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #f59e0b;
+            margin: 15px 0;
+        }
+        
+        .back-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        
+        .back-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: white;
+            font-size: 1.1rem;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: #ef4444;
+            background: white;
+            border-radius: 32px;
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            .question-card { padding: 24px; }
+            .question-text { font-size: 1.1rem; }
+            .stats { padding: 8px 16px; }
+            .stat-value { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo"><i class="fas fa-heartbeat"></i> MedScenario Arena</div>
+        <div class="stats">
+            <div class="stat">❤️ Lives: <span class="stat-value" id="livesCount">-</span></div>
+            <div class="stat">⭐ Score: <span class="stat-value" id="scoreCount">0</span></div>
+            <div class="stat">📋 Q: <span class="stat-value" id="questionNum">0</span>/<span id="totalQ">0</span></div>
+        </div>
+    </div>
+    
+    <div id="gameContent">
+        <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading competition...</div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:5000';
+    
+    function getToken() { return localStorage.getItem('token'); }
+    
+    function getCompetitionId() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('id');
+    }
+    
+    let competitionId = getCompetitionId();
+    let currentQuestion = null;
+    let currentQuestionNumber = 0;
+    let totalQuestions = 0;
+    let timerInterval = null;
+    let timeLeft = 0;
+    let answerLocked = false;
+    let playerScore = 0;
+    let playerLives = 0;
+    
+    function showToast(msg) {
+        // Simple alert for now - can be upgraded to toast
+        alert(msg);
+    }
+    
+    async function checkStatus() {
+        try {
+            const response = await fetch(`${API_URL}/api/auto-competitions/${competitionId}/status`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            const data = await response.json();
+            
+            if (!data.success) {
+                document.getElementById('gameContent').innerHTML = `
+                    <div class="result-card">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ef4444;"></i>
+                        <h2>Competition Not Found</h2>
+                        <button class="back-btn" onclick="window.location.href='competition.html'">Back to Competitions</button>
+                    </div>
+                `;
+                return false;
+            }
+            
+            if (data.status === 'upcoming') {
+                document.getElementById('gameContent').innerHTML = `
+                    <div class="result-card">
+                        <i class="fas fa-clock" style="font-size: 3rem; color: #f59e0b;"></i>
+                        <h2>Competition Not Started Yet</h2>
+                        <p>This competition will start at: ${new Date(data.scheduledTime).toLocaleString()}</p>
+                        <button class="back-btn" onclick="window.location.href='competition.html'">Back to Competitions</button>
+                    </div>
+                `;
+                return false;
+            } else if (data.status === 'ended') {
+                document.getElementById('gameContent').innerHTML = `
+                    <div class="result-card">
+                        <i class="fas fa-flag-checkered" style="font-size: 3rem; color: #6b7280;"></i>
+                        <h2>Competition Ended</h2>
+                        <p>This competition has already finished.</p>
+                        <button class="back-btn" onclick="window.location.href='competition.html'">Back to Competitions</button>
+                    </div>
+                `;
+                return false;
+            } else if (!data.isParticipant) {
+                document.getElementById('gameContent').innerHTML = `
+                    <div class="result-card">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ef4444;"></i>
+                        <h2>Not Registered</h2>
+                        <p>You haven't joined this competition.</p>
+                        <button class="back-btn" onclick="window.location.href='competition.html'">Back to Competitions</button>
+                    </div>
+                `;
+                return false;
+            }
+            
+            return true;
+        } catch (error) {
+            console.error('Error checking status:', error);
+            document.getElementById('gameContent').innerHTML = `
+                <div class="result-card">
+                    <i class="fas fa-wifi" style="font-size: 3rem; color: #ef4444;"></i>
+                    <h2>Connection Error</h2>
+                    <p>Unable to connect to server. Please check your internet connection.</p>
+                    <button class="back-btn" onclick="location.reload()">Try Again</button>
+                </div>
+            `;
+            return false;
+        }
+    }
+    
+    async function loadQuestion() {
+        try {
+            const response = await fetch(`${API_URL}/api/auto-competitions/${competitionId}/play`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            const data = await response.json();
+            
+            if (data.eliminated) {
+                showEliminated(data.finalScore);
+                return;
+            }
+            
+            if (data.completed) {
+                showCompletion(data.finalScore);
+                return;
+            }
+            
+            if (data.success) {
+                currentQuestion = data.question;
+                currentQuestionNumber = data.currentQuestionNumber;
+                totalQuestions = data.totalQuestions;
+                playerScore = data.currentScore;
+                playerLives = data.lives;
+                
+                updateUI();
+                startTimer(currentQuestion.timeLimit);
+                answerLocked = false;
+            } else if (data.message) {
+                document.getElementById('gameContent').innerHTML = `
+                    <div class="result-card">
+                        <i class="fas fa-hourglass-half" style="font-size: 3rem; color: #f59e0b;"></i>
+                        <h2>${data.message}</h2>
+                        <button class="back-btn" onclick="window.location.href='competition.html'">Back to Competitions</button>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Error loading question:', error);
+            document.getElementById('gameContent').innerHTML = `
+                <div class="result-card">
+                    <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #ef4444;"></i>
+                    <h2>Error Loading Question</h2>
+                    <p>Please refresh the page.</p>
+                    <button class="back-btn" onclick="location.reload()">Refresh</button>
+                </div>
+            `;
+        }
+    }
+    
+    function updateUI() {
+        // Update hearts display
+        const heartsHtml = [];
+        for (let i = 0; i < playerLives; i++) {
+            heartsHtml.push('<i class="fas fa-heart heart" style="color: #ef4444;"></i>');
+        }
+        for (let i = playerLives; i < 3; i++) {
+            heartsHtml.push('<i class="fas fa-heart heart lost" style="color: #cbd5e1;"></i>');
+        }
+        document.getElementById('livesCount').innerHTML = heartsHtml.join('');
+        document.getElementById('scoreCount').innerText = playerScore;
+        document.getElementById('questionNum').innerText = currentQuestionNumber;
+        document.getElementById('totalQ').innerText = totalQuestions;
+        
+        const gameContent = document.getElementById('gameContent');
+        gameContent.innerHTML = `
+            <div class="question-card">
+                <div class="timer-bar"><div class="timer-progress" id="timerProgress" style="width: 100%"></div></div>
+                <div class="timer-text" id="timerText">⏱️ Time remaining: <span id="timeLeft">--</span> seconds</div>
+                <div class="lives" id="livesDisplay"></div>
+                <div class="question-text">${escapeHtml(currentQuestion.text)}</div>
+                <div class="options" id="optionsContainer">
+                    ${currentQuestion.options.map((opt, idx) => `
+                        <div class="option" data-opt-index="${idx}" onclick="submitAnswer('${escapeHtml(opt)}')">${escapeHtml(opt)}</div>
+                    `).join('')}
+                </div>
+                <button class="next-btn" id="nextBtn" style="display: none;">Next Question →</button>
+            </div>
+        `;
+        
+        // Update hearts again after DOM update
+        const heartsContainer = document.getElementById('livesDisplay');
+        if (heartsContainer) {
+            const heartsHtml2 = [];
+            for (let i = 0; i < playerLives; i++) {
+                heartsHtml2.push('<i class="fas fa-heart heart" style="color: #ef4444; margin-right: 5px;"></i>');
+            }
+            for (let i = playerLives; i < 3; i++) {
+                heartsHtml2.push('<i class="fas fa-heart heart lost" style="color: #cbd5e1; margin-right: 5px;"></i>');
+            }
+            heartsContainer.innerHTML = heartsHtml2.join('');
+        }
+    }
+    
+    function startTimer(seconds) {
+        timeLeft = seconds;
+        const timerText = document.getElementById('timerText');
+        const timerProgress = document.getElementById('timerProgress');
+        const timeSpan = document.getElementById('timeLeft');
+        
+        if (timeSpan) timeSpan.innerText = timeLeft;
+        
+        if (timerInterval) clearInterval(timerInterval);
+        
+        timerInterval = setInterval(() => {
+            if (answerLocked) return;
+            
+            timeLeft--;
+            if (timeSpan) timeSpan.innerText = Math.max(0, timeLeft);
+            if (timerProgress) {
+                const percentage = (timeLeft / seconds) * 100;
+                timerProgress.style.width = `${Math.max(0, percentage)}%`;
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                if (!answerLocked) {
+                    answerLocked = true;
+                    submitAnswer(null);
+                }
+            }
+        }, 1000);
+    }
+    
+    async function submitAnswer(selectedAnswer) {
+        if (answerLocked) return;
+        answerLocked = true;
+        clearInterval(timerInterval);
+        
+        const options = document.querySelectorAll('.option');
+        options.forEach(opt => opt.classList.add('disabled'));
+        
+        try {
+            const response = await fetch(`${API_URL}/api/auto-competitions/${competitionId}/submit`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({
+                    questionNumber: currentQuestionNumber,
+                    selectedAnswer: selectedAnswer,
+                    timeSpent: currentQuestion.timeLimit - Math.max(0, timeLeft)
+                })
+            });
+            const data = await response.json();
+            
+            // Highlight correct/wrong answers
+            options.forEach(opt => {
+                const optText = opt.innerText;
+                if (optText === currentQuestion.correctAnswer) {
+                    opt.classList.add('correct');
+                }
+                if (selectedAnswer && optText === selectedAnswer && !data.isCorrect) {
+                    opt.classList.add('wrong');
+                }
+            });
+            
+            playerScore = data.score;
+            playerLives = data.livesLeft;
+            document.getElementById('scoreCount').innerText = playerScore;
+            
+            // Update hearts
+            const heartsContainer = document.getElementById('livesDisplay');
+            if (heartsContainer) {
+                const heartsHtml = [];
+                for (let i = 0; i < playerLives; i++) {
+                    heartsHtml.push('<i class="fas fa-heart heart" style="color: #ef4444; margin-right: 5px;"></i>');
+                }
+                for (let i = playerLives; i < 3; i++) {
+                    heartsHtml.push('<i class="fas fa-heart heart lost" style="color: #cbd5e1; margin-right: 5px;"></i>');
+                }
+                heartsContainer.innerHTML = heartsHtml.join('');
+            }
+            
+            if (data.eliminated) {
+                setTimeout(() => showEliminated(data.score), 2000);
+                return;
+            }
+            
+            if (data.competitionEnded && data.isWinner) {
+                setTimeout(() => showWinner(data.score, data.winnerPrize), 2000);
+                return;
+            }
+            
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.style.display = 'block';
+            nextBtn.onclick = () => {
+                loadQuestion();
+            };
+            
+        } catch (error) {
+            console.error('Error submitting answer:', error);
+            showToast('Error submitting answer. Please try again.');
+            answerLocked = false;
+        }
+    }
+    
+    function showEliminated(score) {
+        document.getElementById('gameContent').innerHTML = `
+            <div class="result-card">
+                <i class="fas fa-skull" style="font-size: 4rem; color: #ef4444;"></i>
+                <h2 style="margin-top: 20px;">💀 You've Been Eliminated!</h2>
+                <p>You ran out of lives. Better luck next time!</p>
+                <div class="result-score">Final Score: ${score} points</div>
+                <button class="back-btn" onclick="window.location.href='competition.html'">Back to Competitions</button>
+            </div>
+        `;
+    }
+    
+    function showCompletion(score) {
+        document.getElementById('gameContent').innerHTML = `
+            <div class="result-card">
+                <i class="fas fa-flag-checkered" style="font-size: 4rem; color: #10b981;"></i>
+                <h2 style="margin-top: 20px;">🎉 Competition Completed!</h2>
+                <p>You successfully completed all questions!</p>
+                <div class="result-score">Your Score: ${score} points</div>
+                <button class="back-btn" onclick="window.location.href='competition.html'">Back to Competitions</button>
+            </div>
+        `;
+    }
+    
+    function showWinner(score, prize) {
+        document.getElementById('gameContent').innerHTML = `
+            <div class="result-card">
+                <div class="winner-badge">🏆 CHAMPION 🏆</div>
+                <i class="fas fa-crown" style="font-size: 4rem; color: #f59e0b;"></i>
+                <h2 style="margin-top: 20px;">YOU WON!</h2>
+                <p>You are the champion of this competition!</p>
+                <div class="prize-amount">${prize.toLocaleString()} points prize!</div>
+                <div class="result-score">Total Score: ${score} points</div>
+                <button class="back-btn" onclick="window.location.href='competition.html'">Back to Competitions</button>
+            </div>
+        `;
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    async function init() {
+        if (!competitionId) {
+            document.getElementById('gameContent').innerHTML = `
+                <div class="result-card">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ef4444;"></i>
+                    <h2>No Competition ID</h2>
+                    <p>Invalid competition link.</p>
+                    <button class="back-btn" onclick="window.location.href='competition.html'">Back to Competitions</button>
+                </div>
+            `;
+            return;
+        }
+        
+        const isValid = await checkStatus();
+        if (isValid) {
+            loadQuestion();
+        }
+    }
+    
+    init();
+</script>
+</body>
+</html>

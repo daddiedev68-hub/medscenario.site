@@ -1,0 +1,22 @@
+
+### Register a new user
+POST http://localhost:5000/api/register
+Content-Type: application/json
+
+{
+    "name": "Dr. Jane",
+    "email": "jane@doctor.com",
+    "password": "123456"
+}
+
+### Login with the same user
+POST http://localhost:5000/api/login
+Content-Type: application/json
+
+{
+    "email": "jane@doctor.com",
+    "password": "123456"
+}
+
+### Get all users (admin)
+GET http://localhost:5000/api/users

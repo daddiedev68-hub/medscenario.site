@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedScenario | Login</title>
+    <link rel="icon" type="image/png" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 13c-2.33 0-4.31-1.46-5.11-3.5h10.22c-.8 2.04-2.78 3.5-5.11 3.5z'/%3E%3C/svg%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 32px;
+            padding: 48px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+        .logo { text-align: center; margin-bottom: 32px; }
+        .logo h1 { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #2563eb, #7c3aed); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        h2 { text-align: center; margin-bottom: 24px; color: #1e293b; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #334155; }
+        .input-group input {
+            width: 100%; padding: 14px 16px; border: 1.5px solid #e2e8f0; border-radius: 16px;
+            font-size: 1rem; transition: all 0.2s; font-family: 'Inter', sans-serif;
+        }
+        .input-group input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        button {
+            width: 100%; padding: 14px; background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white; border: none; border-radius: 60px; font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; margin-top: 10px;
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(37,99,235,0.4); }
+        .link { text-align: center; margin-top: 24px; color: #64748b; }
+        .link a { color: #2563eb; text-decoration: none; font-weight: 600; }
+        .message { margin-top: 16px; padding: 12px; border-radius: 12px; text-align: center; display: none; }
+        .message.error { background: #fee2e2; color: #991b1b; display: block; }
+        .message.success { background: #dcfce7; color: #166534; display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo"><h1><i class="fas fa-heartbeat"></i> MedScenario</h1></div>
+        <h2>Welcome Back</h2>
+        <form id="loginForm">
+            <div class="input-group"><label>Email</label><input type="email" id="email" required placeholder="doctor@example.com"></div>
+            <div class="input-group"><label>Password</label><input type="password" id="password" required placeholder="••••••••"></div>
+            <button type="submit">Login →</button>
+        </form>
+        <div class="link">Don't have an account? <a href="register.html">Create Account</a></div>
+        <div id="message" class="message"></div>
+    </div>
+    <script>
+        const API_URL = 'http://localhost:5000';
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('message');
+            
+            try {
+                const response = await fetch(`${API_URL}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Save to localStorage
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = 'Login successful! Redirecting...';
+                    
+                    // Force redirect to index.html
+                    window.location.replace('index.html');
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = data.message;
+                }
+            } catch (error) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Connection error. Make sure server is running on port 5000';
+            }
+        });
+    </script>
+</body>
+</html>

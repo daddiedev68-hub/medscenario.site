@@ -1,0 +1,1063 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>MedScenario | Clinical Scenarios — Immersive Learning</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.03), rgba(124, 58, 237, 0.02)),
+                  linear-gradient(145deg, #f6f9fc 0%, #edf2f9 100%);
+      font-family: 'Inter', sans-serif;
+      color: #0a2540;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.04) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.04) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .container { max-width: 1440px; margin: 0 auto; padding: 28px 36px; position: relative; z-index: 1; }
+    @media (max-width: 768px) { .container { padding: 18px; } }
+
+    /* Glassmorphic Navigation */
+    .topnav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      padding: 10px 28px;
+      border-radius: 80px;
+      box-shadow: 0 15px 35px -12px rgba(0, 0, 0, 0.08);
+      margin-bottom: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 10000;
+    }
+    .topnav:hover { box-shadow: 0 20px 40px -12px rgba(37, 99, 235, 0.15); }
+    
+    .logo {
+      font-weight: 800; background: linear-gradient(135deg, #1e3c72, #2a5298, #7c3aed, #2563eb);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      font-size: 1.75rem; display: flex; align-items: center; gap: 10px; cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .logo:hover { transform: scale(1.02); }
+    
+    .navlinks {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .navlinks a {
+      text-decoration: none; font-weight: 600; font-size: 0.92rem; display: flex;
+      align-items: center; gap: 8px; color: #4a5b7a; transition: all 0.25s;
+      padding: 8px 0; position: relative;
+    }
+    .navlinks a::before {
+      content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 0; height: 2.5px; background: linear-gradient(90deg, #2563eb, #7c3aed);
+      border-radius: 4px; transition: width 0.25s ease;
+    }
+    .navlinks a:hover::before, .navlinks a.active::before { width: 70%; }
+    .navlinks a:hover, .navlinks a.active { color: #2563eb; }
+    
+    .hamburger {
+      display: none;
+      font-size: 1.7rem;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 50%;
+      transition: 0.2s;
+      z-index: 10001;
+    }
+    
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    
+    .notification-icon {
+      font-size: 1.25rem; color: #5a6e8a; cursor: pointer; background: rgba(37,99,235,0.08);
+      width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s;
+    }
+    .notification-icon:hover { background: linear-gradient(135deg, #2563eb15, #7c3aed15); color: #2563eb; transform: scale(1.05); }
+    
+    .profile {
+      width: 48px; height: 48px; background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 700; font-size: 1.2rem; cursor: pointer;
+      box-shadow: 0 8px 20px -8px rgba(37, 99, 235, 0.4); transition: all 0.25s;
+    }
+    .profile:hover { transform: scale(1.05); box-shadow: 0 12px 24px -8px rgba(37, 99, 235, 0.5); }
+    
+    .dropdown-menu {
+      position: absolute; top: 70px; right: 36px; background: rgba(255,255,255,0.98);
+      backdrop-filter: blur(12px); border-radius: 28px; box-shadow: 0 25px 45px -12px rgba(0,0,0,0.2);
+      padding: 12px 0; min-width: 210px; display: none; z-index: 200; border: 1px solid rgba(255,255,255,0.5);
+    }
+    .dropdown-menu.show { display: block; animation: fadeInDown 0.2s ease; }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .dropdown-menu a, .dropdown-menu button {
+      width: 100%; padding: 12px 24px; text-align: left; background: none; border: none;
+      font-size: 0.85rem; color: #1e293b; font-weight: 500; cursor: pointer; transition: all 0.2s;
+    }
+    .dropdown-menu a:hover, .dropdown-menu button:hover { background: linear-gradient(90deg, #eef2ff, #ffffff); color: #2563eb; padding-left: 28px; }
+    
+    @media (max-width: 900px) {
+      .hamburger { display: block; }
+      .navlinks {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 20px;
+        right: 20px;
+        background: rgba(255,255,255,0.98);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        padding: 24px;
+        gap: 18px;
+        border-radius: 32px;
+        z-index: 9999;
+        margin-top: 12px;
+        box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255,255,255,0.5);
+      }
+      .navlinks.show { display: flex; }
+      .dropdown-menu { right: 20px; }
+    }
+
+    /* Hero Section with Animation */
+    .hero-section {
+      margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px; animation: fadeInUp 0.5s ease;
+    }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .hero-section h1 {
+      font-size: 3rem; font-weight: 800; background: linear-gradient(145deg, #0f2b3d, #2563eb, #9b6eff, #7c3aed);
+      background-size: 300% 300%; -webkit-background-clip: text; background-clip: text; color: transparent;
+      letter-spacing: -0.02em; display: inline-flex; align-items: center; gap: 14px;
+      animation: gradientShift 6s ease infinite;
+    }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    
+    .upgrade-badge {
+      background: linear-gradient(135deg, #f59e0b, #ef4444); padding: 10px 24px;
+      border-radius: 60px; color: white; font-weight: 700; cursor: pointer;
+      transition: all 0.25s; box-shadow: 0 6px 14px -6px rgba(245, 158, 11, 0.4);
+      display: flex; align-items: center; gap: 10px; font-size: 0.9rem;
+    }
+    .upgrade-badge:hover { transform: translateY(-2px); box-shadow: 0 12px 20px -8px rgba(245, 158, 11, 0.5); }
+    
+    .points-badge {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-radius: 60px;
+      padding: 10px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: white;
+      box-shadow: 0 6px 14px -6px #2563eb;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Premium Filter Section */
+    .filter-section {
+      background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px);
+      border-radius: 60px; padding: 20px 32px; margin-bottom: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.6); transition: all 0.3s;
+    }
+    .filter-title {
+      font-weight: 700; margin-bottom: 18px; font-size: 0.9rem;
+      letter-spacing: 0.5px; color: #2c3f5c; display: flex; align-items: center; gap: 12px;
+    }
+    .filter-group { display: flex; flex-wrap: wrap; gap: 14px; }
+    .filter-chip {
+      padding: 10px 32px; border-radius: 100px; border: none; background: white;
+      font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.25s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04); color: #2d3e5f;
+    }
+    .filter-chip.active {
+      background: linear-gradient(115deg, #2563eb, #7c3aed); color: white;
+      box-shadow: 0 10px 22px -8px #2563eb70; transform: scale(1.03);
+    }
+    .filter-chip:hover:not(.active) { background: #eef2ff; transform: translateY(-2px); box-shadow: 0 8px 18px -8px rgba(0,0,0,0.1); }
+
+    /* Stunning Scenario Grid */
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 32px;
+      margin-bottom: 60px;
+    }
+    
+    /* Beautiful Glass Cards */
+    .scenario-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-radius: 40px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08);
+      position: relative;
+    }
+    
+    /* Animated gradient border on hover */
+    .scenario-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 40px;
+      padding: 2px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed, #f59e0b);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+    
+    .scenario-card:hover::before { opacity: 1; }
+    .scenario-card:hover {
+      transform: translateY(-12px) scale(1.01);
+      box-shadow: 0 32px 48px -16px rgba(37, 99, 235, 0.25);
+      background: rgba(255, 255, 255, 0.98);
+    }
+    
+    /* Completed scenario badge */
+    .completed-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px -4px #059669;
+    }
+    
+    .card-header { padding: 28px 28px 20px; background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95)); border-bottom: 2px solid rgba(37, 99, 235, 0.08); position: relative; z-index: 1; }
+    .card-header h3 { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.3px; background: linear-gradient(135deg, #1f3a64, #2c3e66); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-right: 90px; }
+    .card-tags { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+    .tag { font-size: 0.7rem; padding: 6px 16px; border-radius: 40px; font-weight: 700; letter-spacing: 0.2px; transition: all 0.2s; }
+    .tag-specialty { background: linear-gradient(135deg, #eef3ff, #ffffff); color: #2563eb; border: 1px solid rgba(37, 99, 235, 0.15); }
+    .tag-easy { background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #166534; border: 1px solid #86efac; }
+    .tag-moderate { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e; border: 1px solid #fde047; }
+    .tag-hard { background: linear-gradient(135deg, #fee2e2, #fecaca); color: #991b1b; border: 1px solid #fca5a5; }
+    .tag-premium { background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; border: none; animation: pulse 2s infinite; }
+    .tag-completed { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; transform: scale(0.98); } }
+    
+    .card-body { padding: 22px 28px; color: #5a6e8c; line-height: 1.5; font-size: 0.85rem; font-weight: 500; position: relative; z-index: 1; min-height: 100px; }
+    .card-footer { padding: 16px 28px 28px; border-top: 1px solid rgba(0, 0, 0, 0.05); display: flex; justify-content: flex-end; position: relative; z-index: 1; }
+    
+    .start-btn {
+      background: linear-gradient(115deg, #2563eb, #7c3aed);
+      color: white;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 60px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 6px 14px -6px #2563eb;
+      position: relative;
+      overflow: hidden;
+    }
+    .start-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .start-btn:hover::before { width: 300px; height: 300px; }
+    .start-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 20px -10px #7c3aed; }
+    .start-btn:disabled { opacity: 0.5; cursor: not-allowed; background: linear-gradient(115deg, #94a3b8, #64748b); box-shadow: none; }
+    .start-btn.completed { background: linear-gradient(115deg, #10b981, #059669); }
+    .start-btn.completed:hover { transform: translateY(-2px); box-shadow: 0 12px 20px -10px #059669; }
+
+    /* Premium Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 30, 45, 0.65);
+      backdrop-filter: blur(14px);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background: white;
+      max-width: 780px;
+      width: 90%;
+      max-height: 85vh;
+      border-radius: 56px;
+      overflow-y: auto;
+      box-shadow: 0 45px 75px -20px rgba(0, 0, 0, 0.25);
+      animation: modalSlideUp 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    
+    @keyframes modalSlideUp {
+      from { opacity: 0; transform: translateY(30px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .modal-header {
+      padding: 34px 40px;
+      background: linear-gradient(125deg, #1f2e4a, #2b3f64, #4a2f8d);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 56px 56px 0 0;
+    }
+    .modal-header h2 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.3px; }
+    .close-modal {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: white;
+      font-size: 1.7rem;
+      width: 52px;
+      height: 52px;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .close-modal:hover { background: rgba(255, 255, 255, 0.3); transform: rotate(90deg) scale(1.05); }
+    
+    .modal-body { padding: 40px; }
+    .modal-body h4 { font-size: 1rem; font-weight: 800; margin: 20px 0 12px 0; display: flex; align-items: center; gap: 10px; color: #2563eb; }
+    .modal-body h4:first-of-type { margin-top: 0; }
+    
+    .options-list { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+    .option-item {
+      padding: 16px 20px;
+      border-radius: 24px;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+      color: #1e293b;
+    }
+    .option-item:hover { background: #eef2ff; border-color: #2563eb; transform: translateX(4px); }
+    .option-item.selected { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; border-color: transparent; box-shadow: 0 8px 20px -12px #7c3aed; }
+    
+    .action-buttons { display: flex; gap: 12px; margin: 24px 0; flex-wrap: wrap; }
+    .action-btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 60px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      border: none;
+      transition: all 0.2s;
+    }
+    .action-btn.submit { background: linear-gradient(115deg, #2563eb, #7c3aed); color: white; box-shadow: 0 4px 12px -6px #2563eb; }
+    .action-btn.submit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px #7c3aed; }
+    .action-btn.explanation { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; }
+    .action-btn.explanation:hover:not(:disabled) { background: #e2e8f0; transform: translateY(-2px); }
+    .action-btn.topic { background: #fef3c7; color: #92400e; border: 1px solid #fde047; }
+    .action-btn.topic:hover:not(:disabled) { background: #fde68a; transform: translateY(-2px); }
+    .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    
+    .info-panel { margin-top: 20px; padding: 24px; border-radius: 28px; display: none; background: #f8fafc; border-left: 4px solid #2563eb; animation: fadeSlide 0.3s ease; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .info-panel.show { display: block; }
+    
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 80px;
+      z-index: 11000;
+      font-weight: 500;
+      display: none;
+      font-size: 0.9rem;
+      animation: fadeInUp 0.2s ease;
+    }
+    
+    .loading { text-align: center; padding: 80px; font-weight: 600; font-size: 1.1rem; background: rgba(255, 255, 255, 0.6); border-radius: 60px; backdrop-filter: blur(8px); color: #2563eb; }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #eef2f8; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #2563eb, #7c3aed); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #1d4ed8, #6d28d9); }
+    
+    /* Share Modal Styles */
+    .share-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .share-modal-container {
+      background: white;
+      border-radius: 48px;
+      padding: 32px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      animation: modalSlideUp 0.3s ease;
+    }
+    .share-modal-container h3 { margin-bottom: 16px; font-size: 1.5rem; }
+    .share-message {
+      background: linear-gradient(135deg, #f0f2f5, #e8ecf1);
+      padding: 16px;
+      border-radius: 24px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+    .share-buttons-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .share-icon-btn {
+      padding: 12px 20px;
+      border-radius: 60px;
+      border: none;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      transition: transform 0.2s;
+    }
+    .share-icon-btn:hover { transform: translateY(-2px); }
+    .share-fb { background: #1877f2; }
+    .share-twitter { background: #1da1f2; }
+    .share-wa { background: #25d366; }
+    .share-li { background: #0077b5; }
+    .share-telegram { background: #0088cc; }
+    .share-copy { background: #6b7280; }
+    .close-share {
+      background: none;
+      border: 1px solid #e2e8f0;
+      padding: 12px 24px;
+      border-radius: 60px;
+      margin-top: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .close-share:hover { background: #f1f5f9; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="topnav">
+    <div class="logo" onclick="location.href='index.html'"><i class="fas fa-heartbeat"></i> MedScenario</div>
+    <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+    <div class="navlinks" id="navLinks">
+      <a href="index.html">🏠 Home</a>
+      <a href="diseases.html">📚 Diseases</a>
+      <a href="scenarios.html" class="active">🩺 Scenarios</a>
+      <a href="competition.html">🏆 Competitions</a>
+      <a href="subscription.html">💎 Subscribe</a>
+      <a href="admin.html" id="adminLink" style="background: linear-gradient(135deg, #ef4444, #dc2626); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700;">👑 Admin</a>
+    </div>
+    <div class="nav-right">
+      <button class="notification-icon" id="notificationBtn"><i class="fas fa-bell"></i></button>
+      <div class="profile" id="profileBtn"><span id="userInitial">DR</span></div>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="profile.html">👤 My Profile</a>
+        <a href="subscription.html">💎 Upgrade to Premium</a>
+        <button id="logoutBtn">🚪 Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-section">
+    <h1><i class="fas fa-stethoscope"></i> Clinical Scenarios</h1>
+    <div style="display: flex; gap: 15px; align-items: center;">
+      <div class="points-badge" id="pointsDisplay"><i class="fas fa-coins"></i> Points: 0</div>
+      <div class="upgrade-badge" id="premiumStatusBadge" onclick="location.href='subscription.html'">
+        <i class="fas fa-crown"></i> <span id="premiumStatusText">Checking...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-section">
+    <div class="filter-title"><i class="fas fa-stethoscope"></i> Filter by Specialty</div>
+    <div class="filter-group" id="specialtyGroup">
+      <button class="filter-chip active" data-specialty="All">All</button>
+      <button class="filter-chip" data-specialty="Pediatrics">Pediatrics</button>
+      <button class="filter-chip" data-specialty="OBGYN">OBGYN</button>
+      <button class="filter-chip" data-specialty="Surgery">Surgery</button>
+      <button class="filter-chip" data-specialty="Internal Medicine">Internal Medicine</button>
+    </div>
+  </div>
+
+  <div class="scenario-grid" id="scenarioGrid">
+    <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading clinical cases...</div>
+  </div>
+</div>
+
+<div id="scenarioModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalTitle">Scenario</h2>
+      <button class="close-modal" id="closeModalBtn">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+<div id="toastMsg" class="toast"></div>
+
+<script>
+  const API_URL = 'http://localhost:5000';
+
+  // Share Dialog
+  function openShareDialog(message) {
+    const existing = document.querySelector('.share-modal-overlay');
+    if (existing) existing.remove();
+    
+    const modalHtml = `
+      <div class="share-modal-overlay" id="shareModalOverlay">
+        <div class="share-modal-container">
+          <h3><i class="fas fa-share-alt"></i> Share Your Achievement</h3>
+          <div class="share-message">${message}</div>
+          <div class="share-buttons-grid">
+            <button class="share-icon-btn share-fb" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=https://medscenario.com&quote=${encodeURIComponent(message)}', '_blank')"><i class="fab fa-facebook-f"></i> Facebook</button>
+            <button class="share-icon-btn share-twitter" onclick="window.open('https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}', '_blank')"><i class="fab fa-twitter"></i> Twitter</button>
+            <button class="share-icon-btn share-wa" onclick="window.open('https://api.whatsapp.com/send?text=${encodeURIComponent(message)}', '_blank')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+            <button class="share-icon-btn share-li" onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url=https://medscenario.com&title=${encodeURIComponent(message)}', '_blank')"><i class="fab fa-linkedin-in"></i> LinkedIn</button>
+            <button class="share-icon-btn share-telegram" onclick="window.open('https://t.me/share/url?url=https://medscenario.com&text=${encodeURIComponent(message)}', '_blank')"><i class="fab fa-telegram-plane"></i> Telegram</button>
+            <button class="share-icon-btn share-copy" onclick="navigator.clipboard.writeText('${message.replace(/'/g, "\\'")}'); showToast('✅ Copied to clipboard!')"><i class="fas fa-copy"></i> Copy Link</button>
+          </div>
+          <button class="close-share" onclick="closeShareDialog()">Close</button>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+  }
+  
+  function closeShareDialog() {
+    const modal = document.getElementById('shareModalOverlay');
+    if (modal) modal.remove();
+  }
+
+  function getToken() { return localStorage.getItem('token'); }
+  
+  function checkAuth() {
+    const token = getToken();
+    if (!token) { 
+      // For demo, create default user
+      if (!localStorage.getItem('user')) {
+        localStorage.setItem('user', JSON.stringify({ name: 'Doctor', email: 'doctor@medscenario.com', completedScenarios: [] }));
+        localStorage.setItem('token', 'demo-token');
+      }
+      return true;
+    }
+    return true;
+  }
+
+  let isPremium = false;
+  let currentUserPoints = 0;
+  let completedScenarios = [];
+
+  // Helper to get completed scenarios from localStorage
+  function getCompletedScenarios() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return user.completedScenarios || [];
+  }
+
+  // Helper to save completed scenario
+  async function addCompletedScenario(scenarioId) {
+    let user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!user.completedScenarios) user.completedScenarios = [];
+    if (!user.completedScenarios.includes(scenarioId)) {
+      user.completedScenarios.push(scenarioId);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      // Also sync with backend
+      try {
+        const token = getToken();
+        await fetch(`${API_URL}/api/profile/add-completed-scenario`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ scenarioId: scenarioId })
+        });
+      } catch (error) {}
+    }
+    completedScenarios = user.completedScenarios;
+  }
+
+  // Check if scenario is already completed
+  function isScenarioCompleted(scenarioId) {
+    return completedScenarios.includes(scenarioId);
+  }
+
+  async function checkPremiumStatus() {
+    try {
+      const response = await fetch(`${API_URL}/api/subscription/status`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      isPremium = data.isPremium || false;
+      currentUserPoints = data.points || 0;
+      
+      const pointsDisplay = document.getElementById('pointsDisplay');
+      if (pointsDisplay) {
+        pointsDisplay.innerHTML = `<i class="fas fa-coins"></i> Points: ${currentUserPoints}`;
+      }
+      
+      const statusText = document.getElementById('premiumStatusText');
+      const statusBadge = document.getElementById('premiumStatusBadge');
+      if (isPremium) {
+        statusText.innerText = '⭐ Premium Member';
+        statusBadge.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+      } else {
+        statusText.innerText = 'Upgrade to Premium';
+        statusBadge.style.background = 'linear-gradient(135deg, #f59e0b, #ef4444)';
+      }
+      return { isPremium, points: currentUserPoints };
+    } catch (error) {
+      return { isPremium: false, points: 0 };
+    }
+  }
+
+  function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+  
+  function showToast(message, duration = 3000) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = message;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, duration);
+  }
+
+  let scenariosDB = [];
+  let selectedSpecialty = "All";
+
+  const FALLBACK_SCENARIOS = [
+    { _id: "1", title: "🌡️ Pediatric Fever Case", specialty: "Pediatrics", difficulty: "Easy", level: "L3", description: "A 4-year-old child presents with fever and cough for 3 days", casePresentation: "A 4-year-old previously healthy child presents to the clinic with fever up to 38.5°C for 3 days, mild cough, and runny nose. The child is playing normally and eating well.", options: ["Viral Upper Respiratory Infection", "Bacterial Pneumonia", "Acute Otitis Media", "Urinary Tract Infection"], correctAnswer: "Viral Upper Respiratory Infection", explanation: "This is likely a viral URI given the mild symptoms, normal activity level, and absence of focal findings.", topicOverview: "Fever in children is common and often viral. Key red flags include toxic appearance, respiratory distress, or focal bacterial infections." },
+    { _id: "2", title: "🤰 OBGYN Emergency", specialty: "OBGYN", difficulty: "Moderate", level: "L4", description: "Third trimester painless vaginal bleeding", casePresentation: "A 32-year-old G3P2 at 34 weeks gestation presents with sudden, painless vaginal bleeding. She denies any trauma or contractions.", options: ["Placenta Previa", "Placental Abruption", "Uterine Rupture", "Vasa Previa"], correctAnswer: "Placenta Previa", explanation: "Painless third trimester bleeding is classic for placenta previa until proven otherwise.", topicOverview: "Placenta previa occurs when the placenta covers the cervical os. It presents with painless bleeding and requires delivery by C-section." },
+    { _id: "3", title: "🏥 Surgical Abdomen", specialty: "Surgery", difficulty: "Moderate", level: "L4", description: "Right lower quadrant pain in young adult", casePresentation: "A 22-year-old male presents with 12 hours of periumbilical pain that has migrated to the right lower quadrant. He reports nausea and anorexia.", options: ["Acute Appendicitis", "Gastroenteritis", "Renal Colic", "Meckel's Diverticulitis"], correctAnswer: "Acute Appendicitis", explanation: "Classic presentation of appendicitis: periumbilical pain migrating to RLQ with anorexia and low-grade fever.", topicOverview: "Appendicitis is the most common surgical emergency. Classic findings include migratory pain, anorexia, and RLQ tenderness." },
+    { _id: "4", title: "❤️ Chest Pain", specialty: "Internal Medicine", difficulty: "Hard", level: "L5", description: "Acute chest pain in elderly patient", casePresentation: "A 65-year-old male with history of hypertension and diabetes presents with substernal chest pressure radiating to left arm, started 2 hours ago.", options: ["Acute Coronary Syndrome", "Pulmonary Embolism", "Aortic Dissection", "Pericarditis"], correctAnswer: "Acute Coronary Syndrome", explanation: "Classic cardiac chest pain with risk factors. Requires immediate ECG, cardiac enzymes, and cardiology consultation.", topicOverview: "Acute coronary syndrome requires rapid diagnosis and management. Initial workup includes ECG and troponin." }
+  ];
+
+  async function loadScenarios() {
+    try {
+      const response = await fetch(`${API_URL}/api/scenarios`);
+      const data = await response.json();
+      if (data.success && data.scenarios && data.scenarios.length > 0) {
+        scenariosDB = data.scenarios;
+      } else {
+        scenariosDB = FALLBACK_SCENARIOS;
+      }
+    } catch (error) {
+      scenariosDB = FALLBACK_SCENARIOS;
+    }
+    renderScenarios();
+  }
+
+  function getDifficultyClass(difficulty) {
+    if (difficulty === 'Easy') return 'tag-easy';
+    if (difficulty === 'Moderate') return 'tag-moderate';
+    return 'tag-hard';
+  }
+
+  function isScenarioPremium(scenario) {
+    return scenario.difficulty === 'Hard' || scenario.level === 'L5' || scenario.level === 'L6';
+  }
+
+  function renderScenarios() {
+    let filtered = scenariosDB.filter(s => selectedSpecialty === "All" ? true : s.specialty === selectedSpecialty);
+    const grid = document.getElementById('scenarioGrid');
+    if (filtered.length === 0) { 
+      grid.innerHTML = '<div style="text-align:center; padding:70px; background:rgba(255,255,255,0.6); border-radius:60px;">🧬 No scenarios found in this specialty</div>'; 
+      return; 
+    }
+    
+    grid.innerHTML = filtered.map(s => {
+      const isLocked = !isPremium && isScenarioPremium(s);
+      const completed = isScenarioCompleted(s._id);
+      return `
+      <div class="scenario-card" data-id="${s._id}">
+        ${completed ? '<div class="completed-badge"><i class="fas fa-check-circle"></i> Completed</div>' : ''}
+        <div class="card-header">
+          <h3>${s.title} ${isLocked ? '🔒' : ''}</h3>
+          <div class="card-tags">
+            <span class="tag tag-specialty"><i class="fas fa-hospital-user"></i> ${s.specialty}</span>
+            <span class="tag ${getDifficultyClass(s.difficulty)}"><i class="fas fa-chart-line"></i> ${s.difficulty}</span>
+            <span class="tag"><i class="fas fa-graduation-cap"></i> ${s.level || 'L3'}</span>
+            ${isLocked ? '<span class="tag tag-premium"><i class="fas fa-crown"></i> PREMIUM</span>' : ''}
+            ${completed ? '<span class="tag tag-completed"><i class="fas fa-check"></i> Completed</span>' : ''}
+          </div>
+        </div>
+        <div class="card-body">
+          <p><i class="fas fa-stethoscope"></i> ${(s.description || s.casePresentation || '').substring(0, 100)}...</p>
+        </div>
+        <div class="card-footer">
+          ${isLocked ? 
+            `<button class="start-btn" disabled onclick="location.href='subscription.html'"><i class="fas fa-lock"></i> Upgrade to Unlock</button>` : 
+            `<button class="start-btn ${completed ? 'completed' : ''}" data-id="${s._id}"><i class="fas ${completed ? 'fa-sync-alt' : 'fa-play'}"></i> ${completed ? 'Review Case →' : 'Start Case →'}</button>`
+          }
+        </div>
+      </div>
+    `}).join('');
+    
+    document.querySelectorAll('.start-btn:not([disabled])').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-id');
+        const scenario = scenariosDB.find(s => s._id === id);
+        if (scenario) openModal(scenario);
+      });
+    });
+  }
+
+  let currentScenarioCorrectAnswered = false;
+  let currentScenarioObj = null;
+
+  function openModal(scenario) {
+    currentScenarioObj = scenario;
+    currentScenarioCorrectAnswered = false;
+    
+    const alreadyCompleted = isScenarioCompleted(scenario._id);
+    
+    document.getElementById('modalTitle').innerHTML = `${scenario.title} <span style="font-size:0.8rem;">${scenario.level || 'L3'}</span>`;
+    
+    let selectedOption = null;
+    
+    document.getElementById('modalBody').innerHTML = `
+      <div><h4><i class="fas fa-user-injured"></i> Case Presentation</h4><p style="line-height:1.6;">${scenario.casePresentation || scenario.description}</p></div>
+      <div><h4><i class="fas fa-question-circle"></i> Clinical Question</h4><p><strong>What is the most appropriate diagnosis or next step?</strong></p></div>
+      <div class="options-list" id="optionsList">
+        ${scenario.options.map((opt, idx) => `<div class="option-item" data-opt="${idx}"><i class="fas fa-circle"></i> ${opt}</div>`).join('')}
+      </div>
+      <div class="action-buttons">
+        <button class="action-btn submit" id="submitAnswerBtn"><i class="fas fa-check-circle"></i> Submit Answer</button>
+        <button class="action-btn explanation" id="explanationBtn" disabled><i class="fas fa-lightbulb"></i> Explanation</button>
+        <button class="action-btn topic" id="topicBtn" disabled><i class="fas fa-book-open"></i> Topic Overview</button>
+      </div>
+      <div id="infoPanel" class="info-panel"></div>
+    `;
+    
+    document.querySelectorAll('.option-item').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.option-item').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selectedOption = opt.getAttribute('data-opt');
+      });
+    });
+    
+    const explanationBtn = document.getElementById('explanationBtn');
+    const topicBtn = document.getElementById('topicBtn');
+    
+    document.getElementById('submitAnswerBtn').onclick = async () => {
+      if (selectedOption === null) { showToast("💡 Please select an answer first"); return; }
+      
+      const selectedText = scenario.options[parseInt(selectedOption)];
+      const isCorrect = (selectedText === scenario.correctAnswer);
+      const panel = document.getElementById('infoPanel');
+      const pointsEarned = 100;
+      
+      if (isCorrect) {
+        // FIX: Only award points if scenario is NOT already completed
+        if (!alreadyCompleted && !currentScenarioCorrectAnswered) {
+          currentScenarioCorrectAnswered = true;
+          
+          try {
+            const token = getToken();
+            await fetch(`${API_URL}/api/profile/add-points`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+              body: JSON.stringify({ points: pointsEarned, scenarioId: scenario._id })
+            });
+            
+            // Mark scenario as completed in localStorage
+            await addCompletedScenario(scenario._id);
+            
+            // Refresh user points from backend
+            await checkPremiumStatus();
+            
+            showToast(`✅ Correct! +${pointsEarned} points earned!`);
+          } catch (error) {
+            showToast(`✅ Correct! +${pointsEarned} points earned!`);
+          }
+          
+          panel.innerHTML = `<h5 style="color:#166534;"><i class="fas fa-trophy"></i> ✓ Correct Answer!</h5>
+                            <p>${scenario.explanation}</p>
+                            <p style="margin-top:10px; padding:12px; background:linear-gradient(135deg, #dcfce7, #bbf7d0); border-radius:16px;">
+                              <i class="fas fa-star"></i> <strong>🏆 +${pointsEarned} points earned! Total: ${currentUserPoints} points</strong>
+                            </p>
+                            <div style="margin-top: 15px;">
+                              <button id="shareAchievementBtn" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px 20px; border-radius: 40px; cursor: pointer; width: 100%; font-size: 0.9rem; font-weight: 600;">
+                                <i class="fas fa-share-alt"></i> Share Your Achievement
+                              </button>
+                            </div>`;
+          panel.style.background = "#dcfce7";
+          
+          explanationBtn.disabled = false;
+          topicBtn.disabled = false;
+          
+          setTimeout(() => {
+            const shareBtn = document.getElementById('shareAchievementBtn');
+            if (shareBtn) {
+              shareBtn.onclick = () => {
+                const shareMessage = `🎉 I just completed "${scenario.title}" and earned ${pointsEarned} points on MedScenario! Total points: ${currentUserPoints}. Join me at medscenario.com`;
+                openShareDialog(shareMessage);
+              };
+            }
+          }, 100);
+          
+          // Re-render scenarios to update the completed badge
+          renderScenarios();
+          
+        } else {
+          // Scenario already completed - no points awarded
+          panel.innerHTML = `<h5 style="color:#166534;"><i class="fas fa-check-circle"></i> ✓ Correct!</h5>
+                            <p>${scenario.explanation}</p>
+                            <p style="margin-top:10px; padding:12px; background:linear-gradient(135deg, #fef3c7, #fde68a); border-radius:16px;">
+                              <i class="fas fa-info-circle"></i> <strong>📚 You've already completed this scenario. No additional points awarded.</strong>
+                            </p>
+                            <div style="margin-top: 15px;">
+                              <button id="shareReviewBtn" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; border: none; padding: 12px 20px; border-radius: 40px; cursor: pointer; width: 100%; font-size: 0.9rem; font-weight: 600;">
+                                <i class="fas fa-share-alt"></i> Share Your Review
+                              </button>
+                            </div>`;
+          panel.style.background = "#fef3c7";
+          
+          explanationBtn.disabled = false;
+          topicBtn.disabled = false;
+          
+          setTimeout(() => {
+            const shareBtn = document.getElementById('shareReviewBtn');
+            if (shareBtn) {
+              shareBtn.onclick = () => {
+                const shareMessage = `📚 I reviewed "${scenario.title}" on MedScenario! Great learning platform at medscenario.com`;
+                openShareDialog(shareMessage);
+              };
+            }
+          }, 100);
+          showToast("✅ Correct! (Already completed - no points awarded)");
+        }
+      } else {
+        panel.innerHTML = `<h5 style="color:#991b1b;"><i class="fas fa-book-medical"></i> ✗ Not quite right</h5>
+                          <p><strong>Correct answer:</strong> ${scenario.correctAnswer}</p>
+                          <p style="margin-top:10px;">${scenario.explanation}</p>`;
+        panel.style.background = "#fee2e2";
+        showToast("📚 Review the explanation to improve your clinical skills");
+        
+        explanationBtn.disabled = true;
+        topicBtn.disabled = true;
+      }
+      panel.classList.add('show');
+    };
+    
+    explanationBtn.onclick = () => {
+      if (!currentScenarioCorrectAnswered && !alreadyCompleted) { 
+        showToast("🔒 Please answer the question correctly first to view the explanation"); 
+        return; 
+      }
+      const panel = document.getElementById('infoPanel');
+      panel.innerHTML = `<h5 style="color:#2563eb;"><i class="fas fa-graduation-cap"></i> Clinical Explanation</h5><p>${scenario.explanation}</p>`;
+      panel.style.background = "#f8fafc";
+      panel.classList.add('show');
+    };
+    
+    topicBtn.onclick = () => {
+      if (!currentScenarioCorrectAnswered && !alreadyCompleted) { 
+        showToast("🔒 Please answer the question correctly first to view the topic overview"); 
+        return; 
+      }
+      const panel = document.getElementById('infoPanel');
+      panel.innerHTML = `<h5 style="color:#92400e;"><i class="fas fa-chalkboard-teacher"></i> Topic Deep Dive</h5><p>${scenario.topicOverview || 'No additional information available.'}</p>`;
+      panel.style.background = "#fef3c7";
+      panel.classList.add('show');
+    };
+    
+    document.getElementById('scenarioModal').style.display = 'flex';
+  }
+
+  // ============ HAMBURGER MENU FIXES ============
+  const hamburger = document.getElementById('hamburgerBtn');
+  const navLinks = document.getElementById('navLinks');
+  
+  if (hamburger && navLinks) {
+    // Toggle menu on hamburger click
+    hamburger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navLinks.classList.toggle('show');
+    });
+    
+    // Close menu when clicking any navigation link
+    document.querySelectorAll('.navlinks a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('show');
+      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+      if (navLinks.classList.contains('show')) {
+        if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+          navLinks.classList.remove('show');
+        }
+      }
+    });
+    
+    // Close menu on window resize (desktop view)
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 900) {
+        navLinks.classList.remove('show');
+      }
+    });
+  }
+
+  // ============ NOTIFICATION FIX - FETCH REAL NOTIFICATIONS ============
+  document.getElementById('notificationBtn').onclick = async () => {
+    try {
+      const token = getToken();
+      if (!token) {
+        showToast("🔔 Login to see notifications");
+        return;
+      }
+      
+      const response = await fetch(`${API_URL}/api/notifications`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+      
+      if (data.success && data.notifications && data.notifications.length > 0) {
+        const unreadCount = data.notifications.filter(n => !n.isRead).length;
+        if (unreadCount > 0) {
+          showToast(`🔔 You have ${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}`);
+        } else {
+          showToast("🔔 No new notifications");
+        }
+      } else {
+        showToast("🔔 No new notifications");
+      }
+    } catch (error) {
+      console.error('Notification error:', error);
+      showToast("🔔 Notification service unavailable");
+    }
+  };
+
+  // ============ ADMIN LINK VISIBILITY ============
+  async function updateAdminLinkVisibility() {
+    const adminLink = document.getElementById('adminLink');
+    if (!adminLink) return;
+    
+    try {
+      const token = getToken();
+      if (!token) {
+        adminLink.style.display = 'none';
+        return;
+      }
+      
+      const response = await fetch(`${API_URL}/api/admin/check`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+      
+      if (data.isAdmin === true) {
+        adminLink.style.display = 'flex';
+      } else {
+        adminLink.style.display = 'none';
+      }
+    } catch (error) {
+      adminLink.style.display = 'none';
+    }
+  }
+
+  // Event Listeners
+  document.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedSpecialty = btn.getAttribute('data-specialty');
+      renderScenarios();
+    });
+  });
+  
+  document.getElementById('closeModalBtn').onclick = () => document.getElementById('scenarioModal').style.display = 'none';
+  window.onclick = (e) => { if (e.target === document.getElementById('scenarioModal')) document.getElementById('scenarioModal').style.display = 'none'; };
+  
+  // Profile dropdown
+  document.getElementById('profileBtn').onclick = (e) => { 
+    e.stopPropagation(); 
+    document.getElementById('dropdownMenu').classList.toggle('show'); 
+  };
+  document.onclick = () => document.getElementById('dropdownMenu').classList.remove('show');
+  document.getElementById('logoutBtn').onclick = logout;
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  document.getElementById('userInitial').innerText = (user.name || 'DR').charAt(0).toUpperCase();
+  
+  // Initialize completed scenarios
+  completedScenarios = getCompletedScenarios();
+
+  if (checkAuth()) {
+    checkPremiumStatus().then(() => {
+      loadScenarios();
+      updateAdminLinkVisibility();
+    });
+  }
+</script>
+</body>
+</html>

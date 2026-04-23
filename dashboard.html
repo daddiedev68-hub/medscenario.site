@@ -1,0 +1,1443 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MedScenario | Dashboard — Your Medical Journey</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 13c-2.33 0-4.31-1.46-5.11-3.5h10.22c-.8 2.04-2.78 3.5-5.11 3.5z'/%3E%3C/svg%3E">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MedScenario">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="MedScenario">
+    <meta name="msapplication-starturl" content="/dashboard.html">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512x512.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.03), rgba(124, 58, 237, 0.02)),
+                        linear-gradient(145deg, #f6f9fc 0%, #edf2f9 100%);
+            font-family: 'Inter', sans-serif;
+            color: #0a2540;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.04) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (max-width: 768px) { .container { padding: 16px; } }
+
+        /* Premium Glassmorphic Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            border-radius: 80px;
+            padding: 10px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+            flex-wrap: wrap;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar:hover {
+            box-shadow: 0 20px 40px -12px rgba(37, 99, 235, 0.15);
+        }
+        
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e3c72, #2a5298, #7c3aed, #2563eb);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo:hover { transform: scale(1.02); }
+        
+        .hamburger {
+            display: none;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            font-size: 1.7rem;
+            cursor: pointer;
+            color: #2563eb;
+            padding: 8px 12px;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: #4a5b7a;
+            transition: all 0.25s;
+            padding: 8px 0;
+            position: relative;
+        }
+        
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2.5px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            border-radius: 4px;
+            transition: width 0.25s ease;
+        }
+        
+        .nav-links a:hover::before {
+            width: 70%;
+        }
+        
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .notification-icon {
+            position: relative;
+            background: rgba(37, 99, 235, 0.08);
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: #5a6e8a;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.25s;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .notification-icon:hover {
+            background: linear-gradient(135deg, #2563eb15, #7c3aed15);
+            color: #2563eb;
+            transform: scale(1.05);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 50%;
+            min-width: 18px;
+            text-align: center;
+            display: none;
+        }
+        
+        .notification-dropdown {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            width: 380px;
+            max-width: 90vw;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            max-height: 450px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .notification-dropdown.show {
+            display: block;
+            animation: fadeInDown 0.2s ease;
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .premium-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            padding: 6px 16px;
+            border-radius: 60px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.02); }
+        }
+        
+        .free-badge {
+            background: linear-gradient(135deg, #94a3b8, #64748b);
+            padding: 6px 16px;
+            border-radius: 60px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(115deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -8px #ef4444;
+        }
+        
+        @media (max-width: 900px) {
+            .hamburger { display: block; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 16px;
+                right: 16px;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 24px;
+                gap: 18px;
+                box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.1);
+                border-radius: 32px;
+                z-index: 1000;
+                margin-top: 12px;
+            }
+            .nav-links.show { display: flex; }
+            .user-info { margin-top: 10px; width: 100%; justify-content: flex-end; }
+            .notification-dropdown { right: 0; width: 100%; }
+        }
+
+        /* Rank Card */
+        .rank-card {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 40px;
+            padding: 32px 36px;
+            margin-bottom: 32px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+            transition: all 0.3s;
+            box-shadow: 0 20px 35px -12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .rank-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 28px 45px -16px rgba(37, 99, 235, 0.4);
+        }
+        
+        .rank-info h3 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .rank-number {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+        
+        .rank-points {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 8px;
+        }
+        
+        #shareRankBtn {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 60px;
+            color: white;
+            cursor: pointer;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        #shareRankBtn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Level Card */
+        .level-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 40px;
+            padding: 28px 32px;
+            margin-bottom: 32px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+            transition: all 0.3s;
+        }
+        
+        .level-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .level-info h3 {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+        
+        .level-info h2 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+        
+        .level-progress {
+            min-width: 250px;
+        }
+        
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            height: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+            height: 100%;
+            border-radius: 30px;
+            transition: width 0.5s ease;
+        }
+        
+        .streak-card {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 16px 28px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+        
+        .streak-card i {
+            color: #f59e0b;
+            font-size: 1.5rem;
+        }
+        
+        .streak-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        /* Stats Cards */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 20px 35px -12px rgba(37, 99, 235, 0.15);
+        }
+        
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #5a6e8c;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* Tasks Section */
+        .tasks-section {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 28px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        
+        .tasks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .tasks-header h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1f3a64, #2563eb);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .task-tabs {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .task-tab {
+            padding: 8px 24px;
+            border-radius: 60px;
+            background: rgba(241, 245, 249, 0.8);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            color: #4a5b7a;
+        }
+        
+        .task-tab.active {
+            background: linear-gradient(115deg, #2563eb, #7c3aed);
+            color: white;
+            box-shadow: 0 6px 14px -6px #2563eb;
+        }
+        
+        .task-tab:hover:not(.active) {
+            background: rgba(241, 245, 249, 1);
+            transform: translateY(-2px);
+        }
+        
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .task-item {
+            background: rgba(248, 250, 252, 0.9);
+            border-radius: 24px;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+        
+        .task-item:hover {
+            transform: translateX(6px);
+            background: white;
+        }
+        
+        .task-info {
+            flex: 2;
+        }
+        
+        .task-title {
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: #1e293b;
+        }
+        
+        .task-desc {
+            font-size: 0.8rem;
+            color: #5a6e8c;
+        }
+        
+        .task-progress {
+            flex: 1;
+            min-width: 180px;
+        }
+        
+        .progress-bar-bg {
+            background: #e2e8f0;
+            border-radius: 30px;
+            height: 8px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            height: 100%;
+            border-radius: 30px;
+            transition: width 0.3s;
+        }
+        
+        .task-stats {
+            font-size: 0.7rem;
+            color: #5a6e8c;
+            margin-top: 6px;
+        }
+        
+        .task-reward {
+            text-align: center;
+            min-width: 100px;
+        }
+        
+        .reward-points {
+            font-weight: 800;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .claim-btn {
+            background: linear-gradient(115deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .claim-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -8px #10b981;
+        }
+        
+        .claim-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #94a3b8;
+        }
+        
+        .completed-badge {
+            color: #10b981;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Quick Links */
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            margin-bottom: 40px;
+        }
+        
+        .quick-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        
+        .quick-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 25px 40px -16px rgba(37, 99, 235, 0.2);
+        }
+        
+        .quick-card i {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 16px;
+        }
+        
+        .quick-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        
+        .quick-card p {
+            font-size: 0.8rem;
+            color: #5a6e8c;
+        }
+
+        /* Leaderboard */
+        .leaderboard {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        
+        .leaderboard h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #1f3a64, #2563eb);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .leader-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            transition: all 0.2s;
+        }
+        
+        .leader-row:hover {
+            transform: translateX(8px);
+            padding-left: 12px;
+            background: rgba(37, 99, 235, 0.03);
+            border-radius: 20px;
+        }
+        
+        .leader-row span:last-child {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(12px);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 80px;
+            z-index: 11000;
+            font-weight: 500;
+            display: none;
+            font-size: 0.9rem;
+            animation: toastFadeIn 0.2s ease;
+        }
+        
+        @keyframes toastFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-weight: 600;
+            color: #2563eb;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #eef2f8;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 10px;
+        }
+        
+        @media (max-width: 700px) { 
+            .stats, .quick-links { grid-template-columns: repeat(2, 1fr); } 
+            .task-item { flex-direction: column; align-items: stretch; text-align: center; }
+            .rank-card { flex-direction: column; text-align: center; }
+            .level-card { flex-direction: column; text-align: center; }
+            .level-progress { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="navbar">
+        <div class="logo" onclick="location.href='dashboard.html'"><i class="fas fa-heartbeat"></i> MedScenario</div>
+        <button class="hamburger" id="hamburgerBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-links" id="navLinks">
+            <a href="home.html">🏠 Home</a>
+            <a href="diseases.html">📚 Diseases</a>
+            <a href="scenarios.html">🩺 Scenarios</a>
+            <a href="competition.html">🏆 Competitions</a>
+            <a href="subscription.html">💎 Subscribe</a>
+            <a href="admin.html">👑 Admin</a>
+        </div>
+        <div class="user-info">
+            <button class="notification-icon" id="notificationBtn">
+                <i class="fas fa-bell"></i>
+                <span id="notificationBadge" class="notification-badge">0</span>
+            </button>
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header" style="padding: 16px 20px; border-bottom: 1px solid #eef2f6; display: flex; justify-content: space-between; font-weight: 700;">
+                    <span>🔔 Notifications</span>
+                    <span class="mark-all-read" id="markAllReadBtn" style="font-size: 0.7rem; color: #2563eb; cursor: pointer;">Mark all as read</span>
+                </div>
+                <div id="notificationsList">
+                    <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading...</div>
+                </div>
+            </div>
+            <span id="userName" style="font-weight: 600;"></span>
+            <span id="subscriptionBadge"></span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- YOUR RANK - AT THE TOP -->
+    <div class="rank-card">
+        <div class="rank-info">
+            <h3><i class="fas fa-chart-line"></i> Your Global Rank</h3>
+            <div class="rank-number" id="yourRankDisplay">#--</div>
+            <div class="rank-points" id="yourPointsDisplay">0 points</div>
+            <button id="shareRankBtn">
+                <i class="fas fa-share-alt"></i> Share My Rank
+            </button>
+        </div>
+        <div>
+            <i class="fas fa-trophy" style="font-size: 3.5rem; opacity: 0.4;"></i>
+        </div>
+    </div>
+
+    <div class="level-card">
+        <div class="level-info">
+            <h3><i class="fas fa-graduation-cap"></i> Your Medical Career</h3>
+            <h2 id="userRank">Medical Student</h2>
+            <p>Level <span id="userLevel">1</span></p>
+        </div>
+        <div class="level-progress">
+            <div class="progress-bar">
+                <div class="progress-fill" id="levelProgressFill" style="width: 0%"></div>
+            </div>
+            <p id="nextLevelInfo" style="font-size: 0.7rem; margin-top: 10px; opacity: 0.8;">-- points to next level</p>
+        </div>
+        <div class="streak-card">
+            <i class="fas fa-fire"></i>
+            <div class="streak-number" id="loginStreak">0</div>
+            <div style="font-size: 0.7rem;">Day Streak</div>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-number" id="diseasesCount">0</div>
+            <div class="stat-label">📚 Diseases in Library</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="scenariosCount">0</div>
+            <div class="stat-label">🩺 Clinical Scenarios</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="competitionsCount">0</div>
+            <div class="stat-label">🏆 Available Competitions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="userTotalPoints">0</div>
+            <div class="stat-label">⭐ Your Total Points</div>
+        </div>
+    </div>
+
+    <div class="tasks-section">
+        <div class="tasks-header">
+            <h3><i class="fas fa-list-check"></i> Your Tasks</h3>
+            <div class="task-tabs">
+                <button class="task-tab active" data-type="daily">📅 Daily Tasks</button>
+                <button class="task-tab" data-type="weekly">📆 Weekly Tasks</button>
+            </div>
+        </div>
+        <div id="tasksList" class="task-list">
+            <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading tasks...</div>
+        </div>
+    </div>
+
+    <div class="quick-links">
+        <a href="diseases.html" class="quick-card"><i class="fas fa-book-medical"></i><h3>Disease Library</h3><p>Explore medical conditions</p></a>
+        <a href="scenarios.html" class="quick-card"><i class="fas fa-stethoscope"></i><h3>Clinical Scenarios</h3><p>Test your diagnostic skills</p></a>
+        <a href="competition.html" class="quick-card"><i class="fas fa-trophy"></i><h3>Competitions</h3><p>Compete globally</p></a>
+    </div>
+
+    <div class="leaderboard">
+        <h3><i class="fas fa-chart-line"></i> Global Leaderboard (Top 10)</h3>
+        <div id="leaderboard"></div>
+    </div>
+</div>
+
+<div id="toastMsg" class="toast"></div>
+
+<script>
+    const API_URL = 'http://localhost:5000';
+    let notificationPollingInterval = null;
+    let currentNotifications = [];
+
+    // ============ SOCIAL MEDIA SHARING ============
+    
+    function shareOnFacebook(message) {
+        const shareUrl = window.location.href;
+        const fbShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(message)}`;
+        window.open(fbShareUrl, '_blank', 'width=600,height=400');
+    }
+
+    function shareOnTwitter(message) {
+        const shareUrl = window.location.href;
+        const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;
+        window.open(twitterShareUrl, '_blank', 'width=600,height=400');
+    }
+
+    function shareOnWhatsApp(message) {
+        const shareUrl = window.location.href;
+        const fullMessage = message + ' ' + shareUrl;
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(fullMessage)}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
+    function shareOnLinkedIn(message) {
+        const shareUrl = window.location.href;
+        const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(message)}`;
+        window.open(linkedinUrl, '_blank', 'width=600,height=500');
+    }
+
+    function shareOnTelegram(message) {
+        const shareUrl = window.location.href;
+        const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(message)}`;
+        window.open(telegramUrl, '_blank');
+    }
+
+    function copyToClipboard(message) {
+        const fullMessage = message + ' ' + window.location.href;
+        navigator.clipboard.writeText(fullMessage).then(() => {
+            showToast('✅ Link copied to clipboard! Share it anywhere.');
+        }).catch(() => {
+            showToast('❌ Failed to copy. Please copy manually.');
+        });
+    }
+
+    function shareAchievement(achievement, points) {
+        const message = `🎉 I just unlocked "${achievement}" on MedScenario! +${points} points!`;
+        showShareModal(message);
+    }
+
+    function shareRankManually() {
+        const rank = document.getElementById('yourRankDisplay').innerText;
+        const points = document.getElementById('userTotalPoints').innerText;
+        const message = `🏆 I'm ranked ${rank} on MedScenario with ${points} points! Join me at medscenario.com`;
+        showShareModal(message);
+    }
+
+    function showShareModal(message) {
+        const existingModal = document.getElementById('shareModal');
+        if (existingModal) existingModal.remove();
+        
+        const escapedMessage = message.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        
+        const modalHtml = `
+            <div id="shareModal" class="share-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(16px); z-index:10000; display:flex; align-items:center; justify-content:center;">
+                <div style="background:white; border-radius:52px; padding:36px; max-width:480px; width:90%; text-align:center; animation:modalSlideUp 0.25s ease;">
+                    <h3 style="margin-bottom:16px;"><i class="fas fa-share-alt"></i> Share Your Achievement</h3>
+                    <div style="background:#f2f5f9; border-radius:28px; padding:14px; margin:16px 0;">${escapedMessage}</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin:28px 0;">
+                        <button class="share-btn facebook" onclick="shareOnFacebook('${message.replace(/'/g, "\\'")}')" style="background:#1877f2; color:white; padding:11px 22px; border-radius:60px; border:none; font-weight:600; cursor:pointer;"><i class="fab fa-facebook-f"></i> Facebook</button>
+                        <button class="share-btn twitter" onclick="shareOnTwitter('${message.replace(/'/g, "\\'")}')" style="background:#1da1f2; color:white; padding:11px 22px; border-radius:60px; border:none; font-weight:600; cursor:pointer;"><i class="fab fa-twitter"></i> Twitter</button>
+                        <button class="share-btn whatsapp" onclick="shareOnWhatsApp('${message.replace(/'/g, "\\'")}')" style="background:#25d366; color:white; padding:11px 22px; border-radius:60px; border:none; font-weight:600; cursor:pointer;"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                        <button class="share-btn linkedin" onclick="shareOnLinkedIn('${message.replace(/'/g, "\\'")}')" style="background:#0077b5; color:white; padding:11px 22px; border-radius:60px; border:none; font-weight:600; cursor:pointer;"><i class="fab fa-linkedin-in"></i> LinkedIn</button>
+                        <button class="share-btn telegram" onclick="shareOnTelegram('${message.replace(/'/g, "\\'")}')" style="background:#0088cc; color:white; padding:11px 22px; border-radius:60px; border:none; font-weight:600; cursor:pointer;"><i class="fab fa-telegram-plane"></i> Telegram</button>
+                        <button class="share-btn copy-btn" onclick="copyToClipboard('${message.replace(/'/g, "\\'")}')" style="background:#6b7280; color:white; padding:11px 22px; border-radius:60px; border:none; font-weight:600; cursor:pointer;"><i class="fas fa-copy"></i> Copy Link</button>
+                    </div>
+                    <button onclick="closeShareModal()" style="background:#eef2ff; color:#1e293b; border:none; padding:12px 24px; border-radius:60px; width:100%; margin-top:12px; font-weight:600; cursor:pointer;">Close</button>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    function closeShareModal() {
+        const modal = document.getElementById('shareModal');
+        if (modal) modal.remove();
+    }
+
+    window.shareOnFacebook = shareOnFacebook;
+    window.shareOnTwitter = shareOnTwitter;
+    window.shareOnWhatsApp = shareOnWhatsApp;
+    window.shareOnLinkedIn = shareOnLinkedIn;
+    window.shareOnTelegram = shareOnTelegram;
+    window.copyToClipboard = copyToClipboard;
+    window.closeShareModal = closeShareModal;
+
+    // ============ PWA SERVICE WORKER ============
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => console.log('✅ Service Worker registered:', registration.scope))
+                .catch(error => console.log('❌ Service Worker registration failed:', error));
+        });
+    }
+
+    // ============ HAMBURGER MENU ============
+    function initMobileMenu() {
+        const hamburger = document.getElementById('hamburgerBtn');
+        const navLinks = document.getElementById('navLinks');
+        
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+        });
+        
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('show');
+            });
+        });
+    }
+
+    // ============ NOTIFICATION FUNCTIONS ============
+    async function loadNotifications() {
+        try {
+            const response = await fetch(`${API_URL}/api/notifications`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            const data = await response.json();
+            if (data.success) {
+                currentNotifications = data.notifications;
+                const unreadCount = currentNotifications.filter(n => !n.isRead).length;
+                updateNotificationBadge(unreadCount);
+                renderNotifications();
+                return currentNotifications;
+            }
+        } catch (error) {
+            console.error('Error loading notifications:', error);
+        }
+        return [];
+    }
+
+    function updateNotificationBadge(count) {
+        const badge = document.getElementById('notificationBadge');
+        if (badge) {
+            if (count > 0) {
+                badge.innerText = count > 9 ? '9+' : count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+
+    function renderNotifications() {
+        const container = document.getElementById('notificationsList');
+        if (!container) return;
+        
+        if (currentNotifications.length === 0) {
+            container.innerHTML = '<div class="empty-notifications" style="padding:40px; text-align:center; color:#9ca3af;">🔔 No notifications yet</div>';
+            return;
+        }
+        
+        container.innerHTML = currentNotifications.map(notif => `
+            <div class="notification-item ${!notif.isRead ? 'unread' : ''}" data-id="${notif._id}" style="padding:14px 20px; border-bottom:1px solid #f0f2f5; cursor:pointer; transition:0.2s; ${!notif.isRead ? 'background:#eef2ff;' : ''}">
+                <div class="notification-title" style="font-weight:700; font-size:0.85rem; margin-bottom:4px;">${notif.title}</div>
+                <div class="notification-message" style="font-size:0.75rem; color:#6b7280;">${notif.message}</div>
+                <div class="notification-time" style="font-size:0.65rem; color:#9ca3af; margin-top:4px;">${formatTimeAgo(notif.createdAt)}</div>
+            </div>
+        `).join('');
+        
+        document.querySelectorAll('.notification-item').forEach(item => {
+            item.addEventListener('click', async () => {
+                const id = item.getAttribute('data-id');
+                if (!item.classList.contains('unread')) return;
+                
+                try {
+                    await fetch(`${API_URL}/api/notifications/${id}/read`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    item.classList.remove('unread');
+                    const newUnreadCount = currentNotifications.filter(n => n._id !== id && !n.isRead).length;
+                    updateNotificationBadge(newUnreadCount);
+                } catch (error) {
+                    console.error('Error marking read:', error);
+                }
+            });
+        });
+    }
+
+    function formatTimeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+        
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins} min ago`;
+        if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+        return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    }
+
+    async function markAllNotificationsRead() {
+        try {
+            await fetch(`${API_URL}/api/notifications/read-all`, {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            currentNotifications.forEach(n => n.isRead = true);
+            renderNotifications();
+            updateNotificationBadge(0);
+            showToast('All notifications marked as read');
+        } catch (error) {
+            console.error('Error marking all read:', error);
+        }
+    }
+
+    function startNotificationPolling() {
+        if (notificationPollingInterval) clearInterval(notificationPollingInterval);
+        
+        notificationPollingInterval = setInterval(async () => {
+            try {
+                const response = await fetch(`${API_URL}/api/notifications`, {
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    const newUnreadCount = data.notifications.filter(n => !n.isRead).length;
+                    const oldUnreadCount = currentNotifications.filter(n => !n.isRead).length;
+                    
+                    if (newUnreadCount > oldUnreadCount) {
+                        const newNotifications = data.notifications.filter(n => !currentNotifications.some(old => old._id === n._id));
+                        if (newNotifications.length > 0) {
+                            const latest = newNotifications[0];
+                            showToastNotification(latest.title, latest.message);
+                        }
+                    }
+                    
+                    currentNotifications = data.notifications;
+                    renderNotifications();
+                    updateNotificationBadge(newUnreadCount);
+                }
+            } catch (error) {
+                console.error('Polling error:', error);
+            }
+        }, 30000);
+    }
+
+    function showToastNotification(title, message) {
+        const toast = document.getElementById('toastMsg');
+        toast.innerHTML = `<strong>${title}</strong><br>${message}`;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 5000);
+    }
+
+    // ============ UI EVENT LISTENERS ============
+    function initNotificationUI() {
+        const notificationBtn = document.getElementById('notificationBtn');
+        const dropdown = document.getElementById('notificationDropdown');
+        const markAllReadBtn = document.getElementById('markAllReadBtn');
+        
+        if (notificationBtn && dropdown) {
+            notificationBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+                loadNotifications();
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!notificationBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+        
+        if (markAllReadBtn) {
+            markAllReadBtn.addEventListener('click', markAllNotificationsRead);
+        }
+    }
+
+    function getToken() { return localStorage.getItem('token'); }
+
+    function checkAuth() {
+        const token = getToken();
+        if (!token) { window.location.href = 'login.html'; return false; }
+        return true;
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toastMsg');
+        toast.innerHTML = msg;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+
+    let currentTaskType = 'daily';
+    let userTasks = [];
+    let currentUserId = null;
+
+    function getUserIdFromToken() {
+        const token = getToken();
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                currentUserId = payload.id;
+                return currentUserId;
+            } catch (e) {
+                console.error('Error parsing token:', e);
+            }
+        }
+        return null;
+    }
+
+    async function loadDiseaseCount() {
+        try {
+            const response = await fetch(`${API_URL}/api/diseases`);
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById('diseasesCount').innerText = data.diseases.length;
+            }
+        } catch (error) {
+            document.getElementById('diseasesCount').innerText = '0';
+        }
+    }
+
+    async function loadScenarioCount() {
+        try {
+            const response = await fetch(`${API_URL}/api/scenarios`);
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById('scenariosCount').innerText = data.scenarios.length;
+            }
+        } catch (error) {
+            document.getElementById('scenariosCount').innerText = '0';
+        }
+    }
+
+    async function loadCompetitionCount() {
+        try {
+            const response = await fetch(`${API_URL}/api/competitions`);
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById('competitionsCount').innerText = data.competitions.length;
+            }
+        } catch (error) {
+            document.getElementById('competitionsCount').innerText = '0';
+        }
+    }
+
+    async function loadUserProfile() {
+        try {
+            const response = await fetch(`${API_URL}/api/profile`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            const data = await response.json();
+            if (data.success) {
+                const user = data.user;
+                document.getElementById('userTotalPoints').innerText = user.points || 0;
+                document.getElementById('yourPointsDisplay').innerText = `${user.points || 0} points`;
+                localStorage.setItem('user', JSON.stringify(user));
+                
+                const badge = document.getElementById('subscriptionBadge');
+                if (user.subscription === 'premium') {
+                    badge.innerHTML = '<span class="premium-badge">⭐ Premium</span>';
+                } else {
+                    badge.innerHTML = '<span class="free-badge">Free Plan</span>';
+                }
+                document.getElementById('userName').innerHTML = `<strong>${user.name || 'Doctor'}</strong>`;
+                return user;
+            }
+        } catch (error) {
+            console.error('Error loading user profile:', error);
+        }
+        return null;
+    }
+
+    async function loadUserStats() {
+        try {
+            const response = await fetch(`${API_URL}/api/user-stats`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            const data = await response.json();
+            if (data.success) {
+                const stats = data.stats;
+                document.getElementById('userRank').innerText = stats.rank;
+                document.getElementById('userLevel').innerText = stats.level;
+                document.getElementById('loginStreak').innerText = stats.currentLoginStreak || 0;
+                
+                const currentPoints = stats.currentPoints;
+                const nextLevelPoints = stats.nextLevelPoints;
+                if (nextLevelPoints) {
+                    const previousLevelPoints = stats.level === 1 ? 0 : 
+                        stats.level === 2 ? 501 : 
+                        stats.level === 3 ? 1501 : 
+                        stats.level === 4 ? 3501 : 7001;
+                    const progress = ((currentPoints - previousLevelPoints) / (nextLevelPoints - previousLevelPoints)) * 100;
+                    document.getElementById('levelProgressFill').style.width = `${Math.min(progress, 100)}%`;
+                    document.getElementById('nextLevelInfo').innerText = `${nextLevelPoints - currentPoints} points to next level`;
+                } else {
+                    document.getElementById('levelProgressFill').style.width = '100%';
+                    document.getElementById('nextLevelInfo').innerText = 'Maximum level reached!';
+                }
+            }
+        } catch (error) {
+            console.error('Error loading user stats:', error);
+        }
+    }
+
+    async function loadTasks() {
+        try {
+            const response = await fetch(`${API_URL}/api/tasks/my-tasks`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            const data = await response.json();
+            if (data.success) {
+                userTasks = data.tasks;
+                renderTasks();
+            }
+        } catch (error) {
+            document.getElementById('tasksList').innerHTML = '<div style="text-align:center; padding:40px;">No tasks available</div>';
+        }
+    }
+
+    function renderTasks() {
+        const filteredTasks = userTasks.filter(t => t.type === currentTaskType);
+        if (filteredTasks.length === 0) {
+            document.getElementById('tasksList').innerHTML = '<div style="text-align:center; padding:40px;">No tasks available</div>';
+            return;
+        }
+
+        const tasksHtml = filteredTasks.map(task => {
+            const progressPercent = (task.progress / task.requiredAmount) * 100;
+            const canClaim = task.completed && !task.rewarded;
+            
+            return `
+                <div class="task-item">
+                    <div class="task-info">
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-desc">${task.description}</div>
+                    </div>
+                    <div class="task-progress">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: ${progressPercent}%"></div>
+                        </div>
+                        <div class="task-stats">${task.progress} / ${task.requiredAmount} completed</div>
+                    </div>
+                    <div class="task-reward">
+                        <div class="reward-points">🏆 +${task.rewardPoints} pts</div>
+                    </div>
+                    <div>
+                        ${canClaim ? 
+                            `<button class="claim-btn" onclick="claimReward('${task._id}')">Claim Reward →</button>` : 
+                            task.completed ? 
+                            '<span class="completed-badge"><i class="fas fa-check-circle"></i> Claimed</span>' : 
+                            '<span style="color:#9ca3af;">In Progress</span>'
+                        }
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        document.getElementById('tasksList').innerHTML = tasksHtml;
+    }
+
+    async function claimReward(taskId) {
+        try {
+            const response = await fetch(`${API_URL}/api/tasks/claim`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({ taskId })
+            });
+            const data = await response.json();
+            if (data.success) {
+                showToast(`🎉 Claimed ${data.rewardPoints} points!`);
+                if (confirm('Share this achievement on social media?')) {
+                    shareAchievement(userTasks.find(t => t._id === taskId)?.title || 'Task', data.rewardPoints);
+                }
+                loadTasks();
+                loadUserStats();
+                loadUserProfile();
+                loadRealLeaderboard();
+            } else {
+                showToast(data.message || 'Error claiming reward');
+            }
+        } catch (error) {
+            showToast('Error claiming reward');
+        }
+    }
+
+    async function loadRealLeaderboard() {
+        try {
+            const response = await fetch(`${API_URL}/api/leaderboard`);
+            const data = await response.json();
+            if (data.success && data.leaderboard.length > 0) {
+                const leaderboardHtml = data.leaderboard.map((user, index) => `
+                    <div class="leader-row">
+                        <span><strong>#${index + 1}</strong> ${user.name}</span>
+                        <span>${user.points} pts</span>
+                    </div>
+                `).join('');
+                document.getElementById('leaderboard').innerHTML = leaderboardHtml;
+                
+                getUserIdFromToken();
+                const userRank = data.leaderboard.findIndex(u => u._id === currentUserId) + 1;
+                if (userRank > 0) {
+                    document.getElementById('yourRankDisplay').innerHTML = `#${userRank}`;
+                } else {
+                    document.getElementById('yourRankDisplay').innerHTML = '#--';
+                }
+            } else {
+                document.getElementById('leaderboard').innerHTML = '<div style="text-align:center; padding:20px;">No users yet</div>';
+                document.getElementById('yourRankDisplay').innerHTML = '#1';
+            }
+        } catch (error) {
+            document.getElementById('leaderboard').innerHTML = '<div style="text-align:center; padding:20px;">Error loading leaderboard</div>';
+        }
+    }
+
+    document.querySelectorAll('.task-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.task-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentTaskType = tab.getAttribute('data-type');
+            renderTasks();
+        });
+    });
+
+    // Share rank button
+    document.getElementById('shareRankBtn').addEventListener('click', () => {
+        shareRankManually();
+    });
+
+    async function initDashboard() {
+        if (checkAuth()) {
+            getUserIdFromToken();
+            await loadUserProfile();
+            await loadUserStats();
+            await loadTasks();
+            await loadDiseaseCount();
+            await loadScenarioCount();
+            await loadCompetitionCount();
+            await loadRealLeaderboard();
+            await loadNotifications();
+            initMobileMenu();
+            initNotificationUI();
+            startNotificationPolling();
+        }
+    }
+
+    initDashboard();
+</script>
+</body>
+</html>

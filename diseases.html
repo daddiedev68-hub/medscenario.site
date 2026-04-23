@@ -1,0 +1,1079 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>MedScenario | Disease Library — Elegant Medical Knowledge</title>
+  <link rel="icon" type="image/png" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 13c-2.33 0-4.31-1.46-5.11-3.5h10.22c-.8 2.04-2.78 3.5-5.11 3.5z'/%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.03), rgba(124, 58, 237, 0.02)),
+                  linear-gradient(145deg, #f6f9fc 0%, #edf2f9 100%);
+      font-family: 'Inter', sans-serif;
+      color: #0a2540;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.04) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.04) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px 36px;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 18px;
+      }
+    }
+
+    /* Premium Glassmorphic Navigation */
+    .topnav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      padding: 10px 28px;
+      border-radius: 80px;
+      box-shadow: 0 15px 35px -12px rgba(0, 0, 0, 0.08);
+      margin-bottom: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 10000;
+    }
+
+    .topnav:hover {
+      box-shadow: 0 20px 40px -12px rgba(37, 99, 235, 0.15);
+    }
+
+    .logo {
+      font-weight: 800;
+      background: linear-gradient(135deg, #1e3c72, #2a5298, #7c3aed, #2563eb);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .logo:hover {
+      transform: scale(1.02);
+    }
+
+    .navlinks {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .navlinks a {
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.92rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #4a5b7a;
+      transition: all 0.25s;
+      padding: 8px 0;
+      position: relative;
+    }
+
+    .navlinks a::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2.5px;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      border-radius: 4px;
+      transition: width 0.25s ease;
+    }
+
+    .navlinks a:hover::before,
+    .navlinks a.active::before {
+      width: 70%;
+    }
+
+    .navlinks a:hover,
+    .navlinks a.active {
+      color: #2563eb;
+    }
+
+    .hamburger {
+      display: none;
+      font-size: 1.7rem;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 50%;
+      transition: 0.2s;
+      z-index: 10001;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .notification-icon {
+      font-size: 1.25rem;
+      color: #5a6e8a;
+      cursor: pointer;
+      background: rgba(37, 99, 235, 0.08);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s;
+    }
+
+    .notification-icon:hover {
+      background: linear-gradient(135deg, #2563eb15, #7c3aed15);
+      color: #2563eb;
+      transform: scale(1.05);
+    }
+
+    .profile {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 8px 20px -8px rgba(37, 99, 235, 0.4);
+      transition: all 0.25s;
+    }
+
+    .profile:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 24px -8px rgba(37, 99, 235, 0.5);
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 70px;
+      right: 36px;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12px);
+      border-radius: 28px;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2);
+      padding: 12px 0;
+      min-width: 210px;
+      display: none;
+      z-index: 200;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .dropdown-menu.show {
+      display: block;
+      animation: fadeInDown 0.2s ease;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown-menu a,
+    .dropdown-menu button {
+      width: 100%;
+      padding: 12px 24px;
+      text-align: left;
+      background: none;
+      border: none;
+      font-size: 0.85rem;
+      color: #1e293b;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .dropdown-menu a:hover,
+    .dropdown-menu button:hover {
+      background: linear-gradient(90deg, #eef2ff, #ffffff);
+      color: #2563eb;
+      padding-left: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .hamburger {
+        display: block;
+      }
+      .navlinks {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        padding: 24px;
+        gap: 18px;
+        border-radius: 32px;
+        z-index: 9999;
+        box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.1);
+      }
+      .navlinks.show {
+        display: flex;
+      }
+      .dropdown-menu {
+        right: 20px;
+      }
+    }
+
+    /* Hero Section */
+    .hero-section {
+      margin-bottom: 32px;
+      animation: fadeInUp 0.5s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-section h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      background: linear-gradient(145deg, #0f2b3d, #2563eb, #9b6eff, #7c3aed);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.02em;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      animation: gradientShift 6s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Search Card */
+    .search-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 80px;
+      padding: 6px 6px 6px 28px;
+      margin-bottom: 32px;
+      box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      transition: all 0.3s;
+    }
+
+    .search-card:focus-within {
+      box-shadow: 0 18px 35px -12px rgba(37, 99, 235, 0.2);
+      background: white;
+      transform: translateY(-2px);
+    }
+
+    .search-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-wrapper i {
+      font-size: 1.2rem;
+      color: #7c8ea0;
+    }
+
+    .search-wrapper input {
+      flex: 1;
+      padding: 16px 0;
+      border: none;
+      background: transparent;
+      font-size: 1rem;
+      outline: none;
+      font-weight: 500;
+    }
+
+    /* Filter Section */
+    .filter-section {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border-radius: 60px;
+      padding: 20px 32px;
+      margin-bottom: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .filter-title {
+      font-weight: 700;
+      margin-bottom: 18px;
+      font-size: 0.9rem;
+      color: #2c3f5c;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .filter-chip {
+      padding: 10px 32px;
+      border-radius: 100px;
+      border: none;
+      background: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      color: #2d3e5f;
+    }
+
+    .filter-chip.active {
+      background: linear-gradient(115deg, #2563eb, #7c3aed);
+      color: white;
+      box-shadow: 0 10px 22px -8px #2563eb70;
+      transform: scale(1.03);
+    }
+
+    .filter-chip:hover:not(.active) {
+      background: #eef2ff;
+      transform: translateY(-2px);
+    }
+
+    /* Disease Grid */
+    .disease-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 32px;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 768px) {
+      .disease-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .disease-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-radius: 40px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08);
+      position: relative;
+    }
+
+    .disease-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 40px;
+      padding: 2px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed, #f59e0b);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+
+    .disease-card:hover::before {
+      opacity: 1;
+    }
+
+    .disease-card:hover {
+      transform: translateY(-12px) scale(1.01);
+      box-shadow: 0 32px 48px -16px rgba(37, 99, 235, 0.25);
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .card-header {
+      padding: 28px 28px 20px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+      border-bottom: 2px solid rgba(37, 99, 235, 0.08);
+    }
+
+    .card-header h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #1f3a64, #2c3e66);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #eef3ff, #ffffff);
+      color: #2563eb;
+      border: 1px solid rgba(37, 99, 235, 0.15);
+    }
+
+    .card-body {
+      padding: 22px 28px 28px;
+      color: #5a6e8c;
+      line-height: 1.5;
+      font-size: 0.85rem;
+      font-weight: 500;
+      min-height: 110px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 80px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 60px;
+      color: #2563eb;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 30, 45, 0.65);
+      backdrop-filter: blur(14px);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      max-width: 880px;
+      width: 90%;
+      max-height: 85vh;
+      border-radius: 56px;
+      overflow-y: auto;
+      box-shadow: 0 45px 75px -20px rgba(0, 0, 0, 0.25);
+      animation: modalSlideUp 0.35s ease;
+    }
+
+    @keyframes modalSlideUp {
+      from { opacity: 0; transform: translateY(30px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-header {
+      padding: 34px 40px;
+      background: linear-gradient(125deg, #1f2e4a, #2b3f64, #4a2f8d);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 56px 56px 0 0;
+    }
+
+    .modal-header h2 {
+      font-size: 1.9rem;
+      font-weight: 800;
+    }
+
+    .close-modal {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: white;
+      font-size: 1.7rem;
+      width: 52px;
+      height: 52px;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .close-modal:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(90deg) scale(1.05);
+    }
+
+    .modal-body {
+      padding: 40px;
+    }
+
+    .detail-section {
+      margin-bottom: 34px;
+      border-bottom: 2px solid #f0f4fa;
+      padding-bottom: 24px;
+    }
+
+    .detail-section h4 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .detail-section ul {
+      padding-left: 1.5rem;
+    }
+
+    .detail-section li {
+      margin: 10px 0;
+      color: #2c4b6e;
+      font-weight: 500;
+    }
+
+    .share-disease-btn {
+      background: linear-gradient(115deg, #2563eb, #7c3aed);
+      border: none;
+      color: white;
+      padding: 16px;
+      border-radius: 60px;
+      font-weight: 700;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .share-disease-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Share Modal */
+    .share-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(16px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .share-modal-content {
+      background: white;
+      border-radius: 52px;
+      padding: 36px;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .share-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin: 28px 0;
+    }
+
+    .share-btn {
+      padding: 11px 22px;
+      border-radius: 60px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .share-btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .facebook { background: #1877f2; color: white; }
+    .twitter { background: #1da1f2; color: white; }
+    .whatsapp { background: #25d366; color: white; }
+    .linkedin { background: #0077b5; color: white; }
+    .telegram { background: #0088cc; color: white; }
+    .copy-btn { background: #6b7280; color: white; }
+    .close-share-btn {
+      background: #eef2ff;
+      color: #1e293b;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 60px;
+      width: 100%;
+      margin-top: 12px;
+      cursor: pointer;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 80px;
+      z-index: 11000;
+      font-weight: 500;
+      display: none;
+      font-size: 0.9rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 70px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 60px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #eef2f8;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="topnav">
+    <div class="logo" onclick="location.href='index.html'"><i class="fas fa-heartbeat"></i> MedScenario</div>
+    <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+    <div class="navlinks" id="navLinks">
+      <a href="home.html">🏠 Home</a>
+      <a href="diseases.html" class="active">📚 Diseases</a>
+      <a href="scenarios.html">🩺 Scenarios</a>
+      <a href="competition.html">🏆 Competitions</a>
+      <a href="subscription.html">💎 Subscribe</a>
+      <a href="admin.html" style="background: linear-gradient(135deg, #ef4444, #dc2626); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700;">👑 Admin</a>
+    </div>
+    <div class="nav-right">
+      <button class="notification-icon" id="notificationBtn"><i class="fas fa-bell"></i></button>
+      <div class="profile" id="profileBtn"><span id="userInitial">DR</span></div>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="profile.html">👤 My Profile</a>
+        <button id="logoutBtn">🚪 Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-section">
+    <h1><i class="fas fa-microscope"></i> Disease Library</h1>
+  </div>
+
+  <div class="search-card">
+    <div class="search-wrapper">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search by disease name...">
+    </div>
+  </div>
+
+  <div class="filter-section">
+    <div class="filter-title">
+      <i class="fas fa-stethoscope"></i> Filter by Specialty
+    </div>
+    <div class="filter-group" id="specialtyGroup">
+      <button class="filter-chip active" data-specialty="All">All</button>
+      <button class="filter-chip" data-specialty="OBGY">OBGY</button>
+      <button class="filter-chip" data-specialty="Surgery">Surgery</button>
+      <button class="filter-chip" data-specialty="Internal Medicine">Internal Medicine</button>
+    </div>
+  </div>
+
+  <div class="disease-grid" id="diseaseGrid">
+    <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading medical database...</div>
+  </div>
+</div>
+
+<div id="diseaseModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalTitle">Disease</h2>
+      <button class="close-modal" id="closeModalBtn">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+<div id="toastMsg" class="toast"></div>
+
+<script>
+  const API_URL = 'http://localhost:5000';
+
+  let diseasesDB = [];
+  let selectedSpecialty = "All";
+  let searchQuery = "";
+
+  function showToast(msg) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = msg;
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 3000);
+  }
+
+  // Sample disease data for fallback
+  const SAMPLE_DISEASES = [
+    {
+      _id: "1",
+      name: "🫀 Hypertension",
+      specialty: "Internal Medicine",
+      year: "L4",
+      overview: "Hypertension is a chronic medical condition characterized by persistently elevated blood pressure in the arteries.",
+      symptoms: ["Often asymptomatic", "Headaches", "Dizziness", "Blurred vision"],
+      signs: ["Elevated BP >130/80", "Retinopathy", "Left ventricular hypertrophy"],
+      ddx: ["White coat hypertension", "Secondary hypertension", "Pheochromocytoma"],
+      ix: ["BP monitoring", "ECG", "Echocardiogram", "Basic metabolic panel"],
+      treatment: "Lifestyle modifications, ACE inhibitors, ARBs, calcium channel blockers",
+      complication: ["Stroke", "Heart attack", "Heart failure", "Kidney disease"],
+      prevention: "Regular exercise, low sodium diet, stress management",
+      epidemiology: "Affects ~1.28 billion adults worldwide"
+    },
+    {
+      _id: "2",
+      name: "🏥 Diabetes Mellitus",
+      specialty: "Internal Medicine",
+      year: "L4",
+      overview: "Diabetes is a metabolic disorder characterized by high blood sugar levels over a prolonged period.",
+      symptoms: ["Polyuria", "Polydipsia", "Polyphagia", "Weight loss"],
+      signs: ["Elevated HbA1c", "Fasting glucose >126", "Acetone breath"],
+      ddx: ["Diabetes insipidus", "Steroid-induced hyperglycemia", "Stress hyperglycemia"],
+      ix: ["HbA1c", "Fasting glucose", "Oral glucose tolerance test", "Urinalysis"],
+      treatment: "Metformin, insulin, SGLT2 inhibitors, GLP-1 agonists",
+      complication: ["Neuropathy", "Nephropathy", "Retinopathy", "Foot ulcers"],
+      prevention: "Healthy diet, exercise, weight management",
+      epidemiology: "463 million adults affected globally"
+    },
+    {
+      _id: "3",
+      name: "⚕️ Appendicitis",
+      specialty: "Surgery",
+      year: "L3",
+      overview: "Acute inflammation of the appendix requiring surgical intervention.",
+      symptoms: ["Periumbilical pain migrating to RLQ", "Nausea", "Anorexia", "Fever"],
+      signs: ["RLQ tenderness", "Rebound tenderness", "Rovsing's sign", "Psoas sign"],
+      ddx: ["Gastroenteritis", "Ovarian cyst", "Ectopic pregnancy", "Meckel's diverticulitis"],
+      ix: ["CBC", "Abdominal CT", "Ultrasound", "CRP"],
+      treatment: "Appendectomy, antibiotics for uncomplicated cases",
+      complication: ["Perforation", "Abscess", "Peritonitis", "Sepsis"],
+      prevention: "None specific, early diagnosis is key",
+      epidemiology: "Most common in ages 10-30, lifetime risk 7-8%"
+    },
+    {
+      _id: "4",
+      name: "🤰 Ectopic Pregnancy",
+      specialty: "OBGY",
+      year: "L4",
+      overview: "Ectopic pregnancy occurs when a fertilized egg implants outside the uterine cavity.",
+      symptoms: ["Abdominal pain", "Vaginal bleeding", "Shoulder tip pain", "Syncope"],
+      signs: ["Adnexal tenderness", "Cervical motion tenderness", "Hypotension"],
+      ddx: ["Miscarriage", "Ovarian cyst", "Appendicitis", "PID"],
+      ix: ["Transvaginal ultrasound", "Beta-hCG", "Culdocentesis"],
+      treatment: "Methotrexate, Laparoscopic salpingectomy",
+      complication: ["Rupture", "Hemorrhagic shock", "Infertility"],
+      prevention: "Early ultrasound, treat risk factors",
+      epidemiology: "1-2% of pregnancies"
+    }
+  ];
+
+  // Auth
+  function checkAuth() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+      return false;
+    }
+    return true;
+  }
+
+  if (checkAuth()) {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    document.getElementById('userInitial').innerText = (user.name || 'DR').charAt(0).toUpperCase();
+  }
+
+  document.getElementById('logoutBtn').onclick = () => { localStorage.clear(); window.location.href = 'login.html'; };
+  
+  // ============ HAMBURGER MENU FIX (UPDATED) ============
+  const hamburger = document.getElementById('hamburgerBtn');
+  const navLinks = document.getElementById('navLinks');
+  
+  if (hamburger && navLinks) {
+    // Toggle menu on hamburger click
+    hamburger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navLinks.classList.toggle('show');
+    });
+    
+    // Close menu when clicking any link inside nav
+    document.querySelectorAll('.navlinks a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('show');
+      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+      if (navLinks.classList.contains('show')) {
+        if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+          navLinks.classList.remove('show');
+        }
+      }
+    });
+    
+    // Close menu on window resize (desktop view)
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 900) {
+        navLinks.classList.remove('show');
+      }
+    });
+  }
+  
+  // Profile dropdown
+  document.getElementById('profileBtn').onclick = (e) => { 
+    e.stopPropagation(); 
+    document.getElementById('dropdownMenu').classList.toggle('show'); 
+  };
+  document.onclick = () => document.getElementById('dropdownMenu')?.classList.remove('show');
+  
+  // ============ NOTIFICATION FIX (UPDATED) ============
+  document.getElementById('notificationBtn').onclick = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        showToast("🔔 Login to see notifications");
+        return;
+      }
+      
+      const response = await fetch(`${API_URL}/api/notifications`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+      
+      if (data.success && data.notifications && data.notifications.length > 0) {
+        const unread = data.notifications.filter(n => !n.isRead).length;
+        if (unread > 0) {
+          showToast(`🔔 You have ${unread} unread notification${unread > 1 ? 's' : ''}`);
+        } else {
+          showToast("🔔 No new notifications");
+        }
+      } else {
+        showToast("🔔 No new notifications");
+      }
+    } catch (error) {
+      console.error('Notification error:', error);
+      showToast("🔔 Notification service unavailable");
+    }
+  };
+
+  async function loadDiseases() {
+    try {
+      const response = await fetch(`${API_URL}/api/diseases`);
+      const data = await response.json();
+      if (data.success && data.diseases && data.diseases.length > 0) {
+        diseasesDB = data.diseases;
+      } else {
+        diseasesDB = SAMPLE_DISEASES;
+        showToast("✨ Using sample diseases - backend not connected", 3000);
+      }
+      renderDiseases();
+    } catch (error) {
+      console.error('Error loading diseases:', error);
+      diseasesDB = SAMPLE_DISEASES;
+      renderDiseases();
+      showToast("✨ Welcome! Exploring medical knowledge library", 3000);
+    }
+  }
+
+  function renderDiseases() {
+    let filtered = diseasesDB.filter(d => {
+      if (selectedSpecialty !== "All" && d.specialty !== selectedSpecialty) return false;
+      if (searchQuery && !d.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      return true;
+    });
+    
+    const grid = document.getElementById('diseaseGrid');
+    if (!filtered.length) {
+      grid.innerHTML = '<div class="empty-state">🧬 No matching diseases found in this category</div>';
+      return;
+    }
+    
+    grid.innerHTML = filtered.map(d => `
+      <div class="disease-card" data-id="${d._id}">
+        <div class="card-header">
+          <h3>${escapeHtml(d.name)}</h3>
+          <div class="card-tags">
+            <span class="tag"><i class="fas fa-stethoscope"></i> ${d.specialty || 'General'}</span>
+            <span class="tag"><i class="fas fa-graduation-cap"></i> ${d.year || 'Core'}</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <p><i class="fas fa-info-circle"></i> ${(d.overview || 'Comprehensive clinical insight').substring(0, 110)}...</p>
+        </div>
+      </div>
+    `).join('');
+    
+    document.querySelectorAll('.disease-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.getAttribute('data-id');
+        const disease = diseasesDB.find(d => d._id === id);
+        if (disease) openModal(disease);
+      });
+    });
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  function openModal(disease) {
+    const safeName = disease.name.replace(/'/g, "\\'");
+    document.getElementById('modalTitle').innerHTML = disease.name;
+    document.getElementById('modalBody').innerHTML = `
+      <div class="detail-section"><h4><i class="fas fa-info-circle"></i> Overview</h4><p>${disease.overview || 'No overview available'}</p></div>
+      <div class="detail-section"><h4><i class="fas fa-head-side-medical"></i> Symptoms</h4><ul>${(disease.symptoms || ['Not specified']).map(s => `<li><i class="fas fa-circle" style="font-size:0.4rem;"></i> ${escapeHtml(s)}</li>`).join('')}</ul></div>
+      <div class="detail-section"><h4><i class="fas fa-notes-medical"></i> Signs</h4><ul>${(disease.signs || ['Not specified']).map(s => `<li><i class="fas fa-circle" style="font-size:0.4rem;"></i> ${escapeHtml(s)}</li>`).join('')}</ul></div>
+      <div class="detail-section"><h4><i class="fas fa-list-ul"></i> Differential Diagnosis</h4><ul>${(disease.ddx || ['Not specified']).map(d => `<li><i class="fas fa-circle" style="font-size:0.4rem;"></i> ${escapeHtml(d)}</li>`).join('')}</ul></div>
+      <div class="detail-section"><h4><i class="fas fa-microscope"></i> Investigations</h4><ul>${(disease.ix || ['Not specified']).map(i => `<li><i class="fas fa-circle" style="font-size:0.4rem;"></i> ${escapeHtml(i)}</li>`).join('')}</ul></div>
+      <div class="detail-section"><h4><i class="fas fa-capsules"></i> Treatment</h4><p>${disease.treatment || 'Not specified'}</p></div>
+      <div class="detail-section"><h4><i class="fas fa-exclamation-triangle"></i> Complications</h4><ul>${(disease.complication || ['Not specified']).map(c => `<li><i class="fas fa-circle" style="font-size:0.4rem;"></i> ${escapeHtml(c)}</li>`).join('')}</ul></div>
+      <div class="detail-section"><h4><i class="fas fa-shield-alt"></i> Prevention</h4><p>${disease.prevention || 'Not specified'}</p></div>
+      <div class="detail-section"><h4><i class="fas fa-globe"></i> Epidemiology</h4><p>${disease.epidemiology || 'Not specified'}</p></div>
+      <button class="share-disease-btn" onclick="shareDisease('${safeName}')"><i class="fas fa-share-alt"></i> Share This Disease with Colleagues</button>
+    `;
+    document.getElementById('diseaseModal').style.display = 'flex';
+  }
+
+  // Share functions
+  window.shareOnFacebook = function(diseaseName) { 
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(`I'm studying ${diseaseName} on MedScenario!`)}`, '_blank'); 
+  };
+  window.shareOnTwitter = function(diseaseName) { 
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I'm studying ${diseaseName} on MedScenario!`)}&url=${encodeURIComponent(window.location.href)}`, '_blank'); 
+  };
+  window.shareOnWhatsApp = function(diseaseName) { 
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`I'm studying ${diseaseName} on MedScenario! ${window.location.href}`)}`, '_blank'); 
+  };
+  window.shareOnLinkedIn = function(diseaseName) { 
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(`I'm studying ${diseaseName} on MedScenario!`)}`, '_blank'); 
+  };
+  window.shareOnTelegram = function(diseaseName) { 
+    window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`I'm studying ${diseaseName} on MedScenario!`)}`, '_blank'); 
+  };
+  window.copyToClipboard = function(diseaseName) { 
+    navigator.clipboard.writeText(`I'm studying ${diseaseName} on MedScenario! ${window.location.href}`).then(() => showToast("✅ Copied! Share knowledge.")).catch(() => showToast("⚠️ Manual copy")); 
+  };
+  window.closeShareModal = function() { 
+    const modalDiv = document.getElementById('shareModal'); 
+    if(modalDiv) modalDiv.remove(); 
+  };
+  window.shareDisease = function(diseaseName) {
+    const escaped = diseaseName.replace(/'/g, "\\'");
+    const existing = document.getElementById('shareModal'); 
+    if(existing) existing.remove();
+    const modalHtml = `<div id="shareModal" class="share-modal"><div class="share-modal-content"><h3><i class="fas fa-share-alt"></i> Share “${diseaseName}”</h3><div class="share-message-box">Spread medical insights with peers</div><div class="share-buttons"><button class="share-btn facebook" onclick="shareOnFacebook('${escaped}')"><i class="fab fa-facebook-f"></i> Facebook</button><button class="share-btn twitter" onclick="shareOnTwitter('${escaped}')"><i class="fab fa-twitter"></i> Twitter</button><button class="share-btn whatsapp" onclick="shareOnWhatsApp('${escaped}')"><i class="fab fa-whatsapp"></i> WhatsApp</button><button class="share-btn linkedin" onclick="shareOnLinkedIn('${escaped}')"><i class="fab fa-linkedin-in"></i> LinkedIn</button><button class="share-btn telegram" onclick="shareOnTelegram('${escaped}')"><i class="fab fa-telegram-plane"></i> Telegram</button><button class="share-btn copy-btn" onclick="copyToClipboard('${escaped}')"><i class="fas fa-copy"></i> Copy Link</button></div><button onclick="closeShareModal()" class="close-share-btn">Close</button></div></div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+  };
+
+  // Event listeners
+  document.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedSpecialty = btn.getAttribute('data-specialty');
+      renderDiseases();
+    });
+  });
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderDiseases();
+  });
+
+  document.getElementById('closeModalBtn').onclick = () => document.getElementById('diseaseModal').style.display = 'none';
+  window.onclick = (e) => {
+    if (e.target === document.getElementById('diseaseModal')) document.getElementById('diseaseModal').style.display = 'none';
+    if (e.target && e.target.className === 'share-modal') document.getElementById('shareModal')?.remove();
+  };
+
+  loadDiseases();
+</script>
+</body>
+</html>

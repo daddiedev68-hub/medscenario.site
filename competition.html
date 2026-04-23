@@ -1,0 +1,714 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>MedScenario | Competitions Arena</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #f5f7fc 0%, #eef2f8 100%);
+      font-family: 'Inter', sans-serif;
+      color: #1a2c3e;
+    }
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
+    @media (max-width: 768px) { .container { padding: 12px; } }
+
+    /* Navigation */
+    .topnav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      padding: 10px 24px;
+      border-radius: 60px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: relative;
+      z-index: 10000;
+    }
+    .logo { font-weight: 800; background: linear-gradient(135deg, #2563eb, #7c3aed); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.4rem; cursor: pointer; }
+    .navlinks { display: flex; gap: 24px; }
+    .navlinks a { text-decoration: none; font-weight: 500; color: #4b5563; }
+    .navlinks a.active, .navlinks a:hover { color: #2563eb; }
+    .hamburger { display: none; font-size: 1.4rem; background: none; border: none; cursor: pointer; z-index: 10001; }
+    .nav-right { display: flex; gap: 15px; align-items: center; }
+    
+    .notification-icon {
+      font-size: 1.2rem;
+      color: #5a6e8a;
+      cursor: pointer;
+      background: rgba(37, 99, 235, 0.08);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s;
+    }
+    .notification-icon:hover {
+      background: linear-gradient(135deg, #2563eb15, #7c3aed15);
+      color: #2563eb;
+      transform: scale(1.05);
+    }
+    
+    .profile { width: 40px; height: 40px; background: linear-gradient(135deg, #2563eb, #7c3aed); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; cursor: pointer; }
+    .dropdown-menu { position: absolute; top: 65px; right: 30px; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 8px 0; min-width: 160px; display: none; z-index: 100; }
+    .dropdown-menu.show { display: block; }
+    .dropdown-menu a, .dropdown-menu button { display: block; padding: 10px 20px; text-decoration: none; color: #334155; background: none; border: none; width: 100%; text-align: left; cursor: pointer; }
+    .dropdown-menu a:hover, .dropdown-menu button:hover { background: #f1f5f9; }
+    
+    @media (max-width: 900px) {
+      .hamburger { display: block; }
+      .navlinks {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 16px;
+        right: 16px;
+        background: white;
+        flex-direction: column;
+        padding: 16px;
+        border-radius: 24px;
+        z-index: 9999;
+        margin-top: 12px;
+        box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+        border: 1px solid rgba(0,0,0,0.1);
+      }
+      .navlinks.show { display: flex; }
+      .dropdown-menu { right: 20px; }
+    }
+
+    /* Hero */
+    .hero-section { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+    .hero-section h1 { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #1e293b, #2563eb, #7c3aed); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .user-points-card { background: white; padding: 8px 20px; border-radius: 40px; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .user-points-card span { font-weight: 800; color: #2563eb; font-size: 1.2rem; }
+
+    /* Tier Cards */
+    .tier-cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+    .tier-card { background: white; padding: 10px 20px; border-radius: 40px; cursor: pointer; font-weight: 600; border: 2px solid transparent; transition: all 0.2s; }
+    .tier-card.active { border-color: #2563eb; background: #eef2ff; }
+    .tier-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+    /* Stats */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 768px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    .stat-card { background: white; border-radius: 20px; padding: 16px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .stat-number { font-size: 1.8rem; font-weight: 800; color: #2563eb; }
+
+    /* Tabs */
+    .comp-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+    .comp-tab { padding: 8px 24px; border-radius: 40px; background: white; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .comp-tab.active { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; }
+
+    /* Competition Grid */
+    .competition-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 24px; margin-bottom: 40px; }
+    @media (max-width: 768px) { .competition-grid { grid-template-columns: 1fr; } }
+    
+    .comp-card { background: white; border-radius: 28px; overflow: hidden; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; }
+    .comp-card:hover { transform: translateY(-5px); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15); }
+    
+    .comp-tier { position: absolute; top: 16px; right: 16px; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 800; color: white; }
+    .tier-bronze { background: #cd7f32; }
+    .tier-silver { background: #94a3b8; }
+    .tier-gold { background: #f59e0b; }
+    .tier-platinum { background: #10b981; }
+    
+    .comp-card-header { padding: 20px 20px 8px; }
+    .comp-card-header h3 { font-size: 1.2rem; font-weight: 800; padding-right: 70px; }
+    .comp-prize { background: #fef3c7; margin: 12px 16px; padding: 10px; border-radius: 20px; text-align: center; font-weight: 800; color: #92400e; }
+    .comp-details { padding: 8px 16px; }
+    .comp-detail { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f2f5; font-size: 0.8rem; }
+    .comp-footer { padding: 16px 20px 20px; display: flex; justify-content: flex-end; border-top: 1px solid #f0f2f5; }
+    
+    .join-btn, .play-btn { padding: 10px 28px; border-radius: 40px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
+    .join-btn { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; }
+    .play-btn { background: #ef4444; color: white; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    .join-btn:hover, .play-btn:hover { transform: translateY(-2px); }
+    .disabled-btn { background: #cbd5e1; cursor: not-allowed; opacity: 0.6; }
+    .joined-badge { background: #10b981; color: white; padding: 8px 20px; border-radius: 40px; font-size: 0.8rem; font-weight: 600; }
+
+    /* Live Banner */
+    .live-banner { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 10px 16px; margin: 0 16px 12px 16px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; flex-wrap: wrap; gap: 8px; }
+    .progress-bar { background: rgba(255,255,255,0.3); border-radius: 10px; height: 6px; flex: 1; overflow: hidden; }
+    .progress-fill { background: #10b981; height: 100%; width: 0%; border-radius: 10px; }
+
+    /* Modal */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; }
+    .modal-content { background: white; max-width: 400px; width: 90%; border-radius: 32px; padding: 28px; }
+    .modal-content h3 { font-size: 1.3rem; margin-bottom: 16px; }
+    .modal-content input { width: 100%; padding: 12px; margin: 12px 0; border: 1px solid #e2e8f0; border-radius: 24px; }
+    .modal-content button { width: 100%; padding: 12px; border-radius: 40px; font-weight: 700; cursor: pointer; border: none; margin-top: 8px; }
+    #confirmJoinBtn { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; }
+    #closeModalBtn { background: #f1f5f9; color: #1e293b; }
+
+    /* Penalty Modal */
+    .penalty-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); z-index: 20000; align-items: center; justify-content: center; }
+    .penalty-card { background: white; max-width: 380px; width: 90%; border-radius: 32px; padding: 28px; text-align: center; }
+    .penalty-card h3 { color: #ef4444; margin-bottom: 16px; }
+    .penalty-amount { font-size: 2rem; font-weight: 800; color: #ef4444; margin: 15px 0; }
+    .penalty-buttons { display: flex; gap: 12px; margin-top: 20px; }
+    .penalty-buttons button { flex: 1; padding: 12px; border-radius: 40px; font-weight: 700; cursor: pointer; border: none; }
+    .accept-penalty { background: #ef4444; color: white; }
+    .cancel-penalty { background: #e2e8f0; color: #1e293b; }
+
+    .leaderboard-section { background: white; border-radius: 28px; padding: 20px; margin-top: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .leader-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f2f5; }
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 10px 20px; border-radius: 40px; z-index: 11000; display: none; font-size: 0.85rem; }
+    .loading { text-align: center; padding: 60px; color: #2563eb; }
+    .refresh-btn { background: #2563eb; color: white; border: none; padding: 5px 12px; border-radius: 30px; cursor: pointer; margin-left: 10px; font-size: 0.7rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="topnav">
+    <div class="logo" onclick="location.href='index.html'"><i class="fas fa-heartbeat"></i> MedScenario</div>
+    <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+    <div class="navlinks" id="navLinks">
+      <a href="home.html">🏠 Home</a>
+      <a href="scenarios.html">🩺 Scenarios</a>
+      <a href="competition.html" class="active">🏆 Competitions</a>
+      <a href="subscription.html">💎 Subscribe</a>
+      <a href="admin.html" id="adminLink" class="admin-link" style="background: linear-gradient(135deg, #ef4444, #dc2626); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700;">👑 Admin</a>
+    </div>
+    <div class="nav-right">
+      <button class="notification-icon" id="notificationBtn"><i class="fas fa-bell"></i></button>
+      <div class="profile" id="profileBtn"><span id="userInitial">DR</span></div>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="profile.html">👤 My Profile</a>
+        <button id="logoutBtn">🚪 Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-section">
+    <h1><i class="fas fa-trophy"></i> Competitions Arena</h1>
+    <div class="user-points-card">
+      <i class="fas fa-star"></i>
+      <span id="userPoints">---</span> points
+      <button class="refresh-btn" onclick="loadAllCompetitions()"><i class="fas fa-sync-alt"></i></button>
+    </div>
+  </div>
+
+  <!-- Tier Selection -->
+  <div class="tier-cards" id="tierCards">
+    <div class="tier-card active" data-tier="all">🏆 All</div>
+    <div class="tier-card" data-tier="bronze">🟢 Bronze (0-500)</div>
+    <div class="tier-card" data-tier="silver">🟡 Silver (1500)</div>
+    <div class="tier-card" data-tier="gold">🔴 Gold (5000)</div>
+    <div class="tier-card" data-tier="platinum">👑 Platinum (15000+)</div>
+    <div class="tier-card" data-tier="active" style="background: #dcfce7;">🔥 Active Only</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-number" id="totalParticipants">0</div><div>Participants</div></div>
+    <div class="stat-card"><div class="stat-number" id="yourRank">#--</div><div>Your Rank</div></div>
+    <div class="stat-card"><div class="stat-number" id="yourPoints">0</div><div>Your Points</div></div>
+    <div class="stat-card"><div class="stat-number" id="nextCompTime">-</div><div>Next Comp</div></div>
+  </div>
+
+  <div class="comp-tabs" id="compTabs">
+    <button class="comp-tab active" data-category="all">🏆 All</button>
+    <button class="comp-tab" data-category="daily">🔥 Daily</button>
+    <button class="comp-tab" data-category="weekly">📅 Weekly</button>
+    <button class="comp-tab" data-category="specialty">🎓 Specialty</button>
+  </div>
+
+  <div class="competition-grid" id="competitionGrid">
+    <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading competitions...</div>
+  </div>
+
+  <div class="leaderboard-section">
+    <h3>🌍 Global Leaderboard</h3>
+    <div id="leaderboardList">Loading...</div>
+  </div>
+</div>
+
+<!-- Join Modal -->
+<div id="joinModal" class="modal">
+  <div class="modal-content">
+    <h3>🏆 Join Competition</h3>
+    <p id="modalCompName"></p>
+    <p id="modalEntryFee"></p>
+    <p id="modalLives"></p>
+    <p id="modalPrize"></p>
+    <input type="text" id="phoneNumber" placeholder="📱 Phone Number">
+    <button id="confirmJoinBtn">Confirm & Pay</button>
+    <button id="closeModalBtn">Cancel</button>
+  </div>
+</div>
+
+<!-- Penalty Modal -->
+<div id="penaltyModal" class="penalty-modal">
+  <div class="penalty-card">
+    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ef4444;"></i>
+    <h3>⚠️ Late Entry!</h3>
+    <p id="penaltyMessage"></p>
+    <div class="penalty-amount" id="penaltyAmount"></div>
+    <div class="penalty-buttons">
+      <button class="accept-penalty" id="acceptPenaltyBtn">Accept Penalty</button>
+      <button class="cancel-penalty" id="cancelPenaltyBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast"></div>
+
+<script>
+  const API_URL = 'http://localhost:5000';
+  let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  let selectedTier = 'all';
+  let selectedCategory = 'all';
+  let allCompetitions = [];
+  let pendingCompetition = null;
+
+  function getToken() { return localStorage.getItem('token'); }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = msg;
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 3000);
+  }
+
+  async function refreshUserData() {
+    try {
+      const response = await fetch(`${API_URL}/api/profile`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      if (data.success) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+        currentUser = data.user;
+        document.getElementById('userPoints').innerText = currentUser.points || 0;
+        document.getElementById('yourPoints').innerText = currentUser.points || 0;
+        document.getElementById('userInitial').innerText = (currentUser.name || 'DR').charAt(0).toUpperCase();
+      }
+    } catch (error) { console.error(error); }
+  }
+
+  function getTierClass(entryFee) {
+    if (entryFee <= 500) return 'tier-bronze';
+    if (entryFee === 1500) return 'tier-silver';
+    if (entryFee === 5000) return 'tier-gold';
+    return 'tier-platinum';
+  }
+
+  function getTierName(entryFee) {
+    if (entryFee <= 500) return 'BRONZE';
+    if (entryFee === 1500) return 'SILVER';
+    if (entryFee === 5000) return 'GOLD';
+    return 'PLATINUM';
+  }
+
+  // ============ UPDATE ADMIN LINK VISIBILITY ============
+  async function updateAdminLinkVisibility() {
+    const adminLink = document.getElementById('adminLink');
+    if (!adminLink) return;
+    
+    try {
+      const token = getToken();
+      if (!token) {
+        adminLink.style.display = 'none';
+        return;
+      }
+      
+      const response = await fetch(`${API_URL}/api/admin/check`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+      
+      if (data.isAdmin === true) {
+        adminLink.style.display = 'flex';
+      } else {
+        adminLink.style.display = 'none';
+      }
+    } catch (error) {
+      adminLink.style.display = 'none';
+    }
+  }
+
+  // ============ NOTIFICATION FUNCTION ============
+  document.getElementById('notificationBtn').onclick = async () => {
+    try {
+      const token = getToken();
+      if (!token) {
+        showToast("🔔 Login to see notifications");
+        return;
+      }
+      
+      const response = await fetch(`${API_URL}/api/notifications`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+      
+      if (data.success && data.notifications && data.notifications.length > 0) {
+        const unreadCount = data.notifications.filter(n => !n.isRead).length;
+        if (unreadCount > 0) {
+          showToast(`🔔 You have ${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}`);
+        } else {
+          showToast("🔔 No new notifications");
+        }
+      } else {
+        showToast("🔔 No new notifications");
+      }
+    } catch (error) {
+      console.error('Notification error:', error);
+      showToast("🔔 Notification service unavailable");
+    }
+  };
+
+  // ============ HAMBURGER MENU FIXES ============
+  const hamburger = document.getElementById('hamburgerBtn');
+  const navLinks = document.getElementById('navLinks');
+  
+  if (hamburger && navLinks) {
+    // Toggle menu on hamburger click
+    hamburger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navLinks.classList.toggle('show');
+    });
+    
+    // Close menu when clicking any navigation link
+    document.querySelectorAll('.navlinks a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('show');
+      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+      if (navLinks.classList.contains('show')) {
+        if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+          navLinks.classList.remove('show');
+        }
+      }
+    });
+    
+    // Close menu on window resize (desktop view)
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 900) {
+        navLinks.classList.remove('show');
+      }
+    });
+  }
+
+  // Profile dropdown
+  document.getElementById('profileBtn').onclick = (e) => { 
+    e.stopPropagation(); 
+    document.getElementById('dropdownMenu').classList.toggle('show'); 
+  };
+  document.onclick = () => document.getElementById('dropdownMenu').classList.remove('show');
+  document.getElementById('logoutBtn').onclick = () => { localStorage.clear(); window.location.href = 'login.html'; };
+
+  // MAIN FUNCTION - Calls both APIs and combines results
+  async function loadAllCompetitions() {
+    try {
+      document.getElementById('competitionGrid').innerHTML = '<div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading...</div>';
+      
+      // 1. Get upcoming competitions
+      const upcomingRes = await fetch(`${API_URL}/api/auto-competitions/upcoming?t=${Date.now()}`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const upcomingData = await upcomingRes.json();
+      
+      // 2. Get competitions the user has joined (includes active ones!)
+      const joinedRes = await fetch(`${API_URL}/api/user/joined-competitions`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const joinedData = await joinedRes.json();
+      
+      // Combine both arrays
+      let combined = [];
+      const existingIds = new Set();
+      
+      // Add upcoming competitions
+      if (upcomingData.success && upcomingData.competitions) {
+        for (let comp of upcomingData.competitions) {
+          existingIds.add(comp._id);
+          combined.push(comp);
+        }
+      }
+      
+      // Add joined competitions (these include active ones that user is in)
+      if (joinedData.success && joinedData.competitions) {
+        for (let comp of joinedData.competitions) {
+          if (!existingIds.has(comp._id)) {
+            combined.push(comp);
+          }
+        }
+      }
+      
+      // Get user join status for each competition
+      for (let comp of combined) {
+        try {
+          const statusRes = await fetch(`${API_URL}/api/auto-competitions/${comp._id}/status`, {
+            headers: { 'Authorization': `Bearer ${getToken()}` }
+          });
+          const statusData = await statusRes.json();
+          comp.userJoined = statusData.isParticipant;
+          comp.userStatus = statusData.participantData;
+          
+          // If user is in an active competition, mark it as active
+          if (comp.userJoined && comp.userStatus && comp.userStatus.currentQuestion < comp.totalQuestions) {
+            comp.isActiveForUser = true;
+          }
+        } catch (err) {
+          comp.userJoined = false;
+        }
+      }
+      
+      allCompetitions = combined;
+      renderCompetitions();
+      updateStats();
+      
+    } catch (error) {
+      console.error('Error:', error);
+      document.getElementById('competitionGrid').innerHTML = '<div style="text-align:center; padding:40px;">⚠️ Error loading competitions <button class="refresh-btn" onclick="loadAllCompetitions()" style="margin-left:10px;">Retry</button></div>';
+    }
+  }
+
+  function renderCompetitions() {
+    // Filter by tier
+    let filtered = allCompetitions;
+    if (selectedTier !== 'all') {
+      if (selectedTier === 'bronze') filtered = allCompetitions.filter(c => c.entryFee <= 500);
+      else if (selectedTier === 'silver') filtered = allCompetitions.filter(c => c.entryFee === 1500);
+      else if (selectedTier === 'gold') filtered = allCompetitions.filter(c => c.entryFee === 5000);
+      else if (selectedTier === 'platinum') filtered = allCompetitions.filter(c => c.entryFee >= 15000);
+      else if (selectedTier === 'active') filtered = allCompetitions.filter(c => c.status === 'upcoming' || c.status === 'active');
+    }
+    
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(c => c.category === selectedCategory);
+    }
+    
+    const grid = document.getElementById('competitionGrid');
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div style="text-align:center; padding:60px;">✨ No competitions found</div>';
+      return;
+    }
+    
+    grid.innerHTML = filtered.map(comp => {
+      const tierClass = getTierClass(comp.entryFee);
+      const tierName = getTierName(comp.entryFee);
+      const canJoin = !comp.userJoined && comp.status === 'upcoming' && currentUser.points >= comp.entryFee;
+      
+      // Check if user is in an active competition
+      const isActiveForUser = comp.isActiveForUser || (comp.userJoined && comp.userStatus && comp.userStatus.currentQuestion < comp.totalQuestions);
+      
+      let liveHtml = '';
+      let buttonHtml = '';
+      
+      if (isActiveForUser && comp.userStatus) {
+        const currentQ = comp.userStatus.currentQuestion || 0;
+        const totalQ = comp.totalQuestions;
+        const progressPercent = (currentQ / totalQ) * 100;
+        const missedQuestions = currentQ;
+        const penaltyPoints = missedQuestions * comp.pointsPerQuestion;
+        
+        liveHtml = `
+          <div class="live-banner">
+            <span><i class="fas fa-fire"></i> LIVE NOW!</span>
+            <span>Q${currentQ + 1}/${totalQ}</span>
+            <div class="progress-bar"><div class="progress-fill" style="width: ${progressPercent}%"></div></div>
+            <span>⭐ ${comp.userStatus.score || 0}</span>
+          </div>
+        `;
+        
+        if (missedQuestions > 0) {
+          liveHtml += `<div style="background:#fef3c7; margin:0 16px 12px 16px; padding:8px; border-radius:16px; font-size:0.7rem; color:#92400e;"><i class="fas fa-exclamation-triangle"></i> Penalty: -${penaltyPoints} pts for ${missedQuestions} missed questions</div>`;
+        }
+        
+        buttonHtml = `<button class="play-btn" onclick="enterCompetition('${comp._id}', '${escapeHtml(comp.name)}', ${comp.pointsPerQuestion}, ${currentQ}, ${missedQuestions})"><i class="fas fa-door-open"></i> ${missedQuestions > 0 ? `Enter (-${penaltyPoints} pts)` : 'Continue →'}</button>`;
+        
+      } else if (canJoin) {
+        buttonHtml = `<button class="join-btn" onclick="openJoinModal('${comp._id}', '${escapeHtml(comp.name)}', ${comp.entryFee}, ${comp.lives || 2}, ${comp.prizePool})">Join Competition →</button>`;
+      } else if (comp.userJoined && comp.status === 'upcoming') {
+        const minsLeft = Math.max(0, Math.floor((new Date(comp.scheduledTime) - new Date()) / 60000));
+        buttonHtml = `<span class="joined-badge"><i class="fas fa-clock"></i> Starts in ${minsLeft} min</span>`;
+      } else if (comp.userJoined && comp.userStatus && comp.userStatus.eliminated) {
+        buttonHtml = `<span class="joined-badge" style="background:#ef4444;"><i class="fas fa-skull"></i> Eliminated</span>`;
+      } else {
+        buttonHtml = `<button class="join-btn disabled-btn" disabled>${currentUser.points < comp.entryFee ? `Need ${comp.entryFee} pts` : 'Ended'}</button>`;
+      }
+      
+      return `
+        <div class="comp-card">
+          <div class="comp-tier ${tierClass}">${tierName}</div>
+          <div class="comp-card-header"><h3>${escapeHtml(comp.name)}</h3></div>
+          <div class="comp-prize">🏆 Prize Pool: ${comp.prizePool.toLocaleString()} points</div>
+          ${liveHtml}
+          <div class="comp-details">
+            <div class="comp-detail"><span>💰 Entry Fee:</span><span><strong>${comp.entryFee.toLocaleString()} pts</strong></span></div>
+            <div class="comp-detail"><span>📋 Questions:</span><span>${comp.totalQuestions}</span></div>
+            <div class="comp-detail"><span>⏱️ Time per Q:</span><span>${comp.timePerQuestion}s</span></div>
+            <div class="comp-detail"><span>❤️ Lives:</span><span>${comp.lives || 2}</span></div>
+            <div class="comp-detail"><span>⭐ Points per Q:</span><span>${comp.pointsPerQuestion}</span></div>
+            <div class="comp-detail"><span>👥 Participants:</span><span>${comp.participants?.length || 0}</span></div>
+            <div class="comp-detail"><span>📅 ${isActiveForUser ? 'Started' : 'Starts'}:</span><span>${isActiveForUser ? 'LIVE NOW!' : new Date(comp.scheduledTime).toLocaleString()}</span></div>
+          </div>
+          <div class="comp-footer">${buttonHtml}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function updateStats() {
+    const totalParts = allCompetitions.reduce((sum, c) => sum + (c.participants?.length || 0), 0);
+    document.getElementById('totalParticipants').innerText = totalParts.toLocaleString();
+    const nextComp = allCompetitions.find(c => c.status === 'upcoming');
+    if (nextComp) {
+      const daysLeft = Math.ceil((new Date(nextComp.scheduledTime) - new Date()) / (1000 * 60 * 60 * 24));
+      document.getElementById('nextCompTime').innerText = daysLeft > 0 ? `${daysLeft}d` : 'Soon';
+    }
+  }
+
+  function enterCompetition(compId, compName, pointsPerQuestion, currentQuestion, missedQuestions) {
+    if (missedQuestions > 0) {
+      const penaltyPoints = missedQuestions * pointsPerQuestion;
+      pendingCompetition = { compId, currentQuestion, penaltyPoints };
+      document.getElementById('penaltyMessage').innerHTML = `You missed ${missedQuestions} question(s) in "${compName}".`;
+      document.getElementById('penaltyAmount').innerHTML = `-${penaltyPoints} points`;
+      document.getElementById('penaltyModal').style.display = 'flex';
+    } else {
+      window.location.href = `competition-play.html?id=${compId}`;
+    }
+  }
+
+  document.getElementById('acceptPenaltyBtn')?.addEventListener('click', async () => {
+    if (pendingCompetition) {
+      try {
+        await fetch(`${API_URL}/api/profile/add-points`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+          body: JSON.stringify({ points: -pendingCompetition.penaltyPoints, scenarioId: null })
+        });
+        await refreshUserData();
+        window.location.href = `competition-play.html?id=${pendingCompetition.compId}&resume=true&currentQ=${pendingCompetition.currentQuestion}`;
+      } catch (error) { showToast('Error applying penalty'); }
+    }
+    document.getElementById('penaltyModal').style.display = 'none';
+    pendingCompetition = null;
+  });
+
+  document.getElementById('cancelPenaltyBtn')?.addEventListener('click', () => {
+    document.getElementById('penaltyModal').style.display = 'none';
+    pendingCompetition = null;
+  });
+
+  function openJoinModal(id, name, entryFee, lives, prizePool) {
+    if (currentUser.points < entryFee) {
+      showToast(`❌ Need ${entryFee.toLocaleString()} points`);
+      return;
+    }
+    window.currentJoinComp = { id, name, entryFee, lives, prizePool };
+    document.getElementById('modalCompName').innerHTML = `<strong>${escapeHtml(name)}</strong>`;
+    document.getElementById('modalEntryFee').innerHTML = `💰 Entry Fee: ${entryFee.toLocaleString()} points`;
+    document.getElementById('modalLives').innerHTML = `❤️ ${lives} lives`;
+    document.getElementById('modalPrize').innerHTML = `🏆 Prize Pool: ${prizePool.toLocaleString()} points`;
+    document.getElementById('joinModal').style.display = 'flex';
+  }
+
+  async function confirmJoin() {
+    const phoneNumber = document.getElementById('phoneNumber').value;
+    if (!phoneNumber) { showToast('Enter phone number'); return; }
+    
+    const btn = document.getElementById('confirmJoinBtn');
+    btn.innerText = 'Processing...';
+    btn.disabled = true;
+    
+    try {
+      const response = await fetch(`${API_URL}/api/auto-competitions/${window.currentJoinComp.id}/join`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+        body: JSON.stringify({ phoneNumber })
+      });
+      const data = await response.json();
+      if (data.success) {
+        showToast(data.message);
+        document.getElementById('joinModal').style.display = 'none';
+        document.getElementById('phoneNumber').value = '';
+        await refreshUserData();
+        loadAllCompetitions();
+      } else {
+        showToast(data.message || 'Error joining');
+      }
+    } catch (error) { showToast('Error joining'); }
+    finally { btn.innerText = 'Confirm & Pay'; btn.disabled = false; }
+  }
+
+  async function loadLeaderboard() {
+    try {
+      const response = await fetch(`${API_URL}/api/leaderboard`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      if (data.success && data.leaderboard.length > 0) {
+        const html = data.leaderboard.slice(0, 10).map((leader, idx) => {
+          const rank = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx+1}`;
+          return `<div class="leader-row"><span>${rank} ${escapeHtml(leader.name)}</span><span>${leader.points.toLocaleString()} pts</span></div>`;
+        }).join('');
+        document.getElementById('leaderboardList').innerHTML = html;
+        const userRank = data.leaderboard.findIndex(u => u._id === currentUser._id) + 1;
+        if (userRank > 0) document.getElementById('yourRank').innerHTML = userRank === 1 ? '🥇 #1' : userRank === 2 ? '🥈 #2' : userRank === 3 ? '🥉 #3' : `#${userRank}`;
+      }
+    } catch (error) { console.error(error); }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+  }
+
+  // Event Listeners
+  document.querySelectorAll('.tier-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      selectedTier = card.getAttribute('data-tier');
+      renderCompetitions();
+    });
+  });
+
+  document.querySelectorAll('.comp-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.comp-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      selectedCategory = tab.getAttribute('data-category');
+      renderCompetitions();
+    });
+  });
+
+  document.getElementById('confirmJoinBtn').onclick = confirmJoin;
+  document.getElementById('closeModalBtn').onclick = () => document.getElementById('joinModal').style.display = 'none';
+  window.onclick = (e) => {
+    if (e.target === document.getElementById('joinModal')) document.getElementById('joinModal').style.display = 'none';
+    if (e.target === document.getElementById('penaltyModal')) document.getElementById('penaltyModal').style.display = 'none';
+  };
+
+  // Initialize
+  if (getToken()) {
+    refreshUserData().then(() => {
+      loadAllCompetitions();
+      loadLeaderboard();
+      updateAdminLinkVisibility();
+      // Auto-refresh every 15 seconds
+      setInterval(() => {
+        loadAllCompetitions();
+        loadLeaderboard();
+      }, 15000);
+    });
+  } else {
+    window.location.href = 'login.html';
+  }
+</script>
+</body>
+</html>

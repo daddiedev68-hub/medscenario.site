@@ -1,0 +1,1086 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>MedScenario | Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: linear-gradient(135deg, #f5f7fc 0%, #eef2f8 100%); font-family: 'Inter', sans-serif; color: #1a2c3e; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+    @media (max-width: 768px) { .container { padding: 16px; } }
+
+    /* Navigation */
+    .topnav {
+      display: flex; justify-content: space-between; align-items: center; background: white;
+      padding: 12px 24px; border-radius: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      margin-bottom: 28px; position: relative; flex-wrap: wrap;
+    }
+    .logo { font-weight: 800; background: linear-gradient(135deg, #2563eb, #7c3aed); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.6rem; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .navlinks { display: flex; gap: 28px; align-items: center; }
+    .navlinks a { text-decoration: none; font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 8px; color: #4b5563; transition: all 0.2s; }
+    .navlinks a:hover, .navlinks a.active { color: #2563eb; }
+    .hamburger { display: none; font-size: 1.6rem; background: none; border: none; cursor: pointer; color: #1e293b; padding: 8px; }
+    .nav-right { display: flex; align-items: center; gap: 20px; position: relative; }
+    .notification-icon { font-size: 1.3rem; color: #4b5563; cursor: pointer; background: none; border: none; }
+    .profile { width: 42px; height: 42px; background: linear-gradient(135deg, #2563eb, #7c3aed); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; cursor: pointer; }
+    .dropdown-menu { position: absolute; top: 55px; right: 0; background: white; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); padding: 12px 0; min-width: 180px; display: none; z-index: 100; }
+    .dropdown-menu.show { display: block; }
+    .dropdown-menu a { display: block; padding: 10px 20px; text-decoration: none; color: #334155; font-size: 0.85rem; }
+    .dropdown-menu a:hover { background: #f1f5f9; color: #2563eb; }
+    .dropdown-menu button { width: 100%; padding: 10px 20px; text-align: left; background: none; border: none; cursor: pointer; font-size: 0.85rem; color: #334155; }
+    .dropdown-menu button:hover { background: #f1f5f9; color: #2563eb; }
+    @media (max-width: 900px) { .hamburger { display: block; } .navlinks { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; flex-direction: column; padding: 20px; gap: 16px; border-radius: 0 0 28px 28px; z-index: 1000; } .navlinks.show { display: flex; } }
+
+    /* Admin Content */
+    .admin-hero { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 32px; padding: 32px; margin-bottom: 32px; color: white; }
+    .admin-hero h1 { font-size: 2rem; margin-bottom: 8px; }
+    .admin-tabs { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .admin-tab { padding: 12px 28px; border-radius: 40px; background: white; border: 1px solid #e2e8f0; font-weight: 600; cursor: pointer; }
+    .admin-tab.active { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; border-color: transparent; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 32px; }
+    .stat-card { background: white; border-radius: 28px; padding: 24px; display: flex; align-items: center; justify-content: space-between; }
+    .stat-info h3 { font-size: 0.8rem; color: #6b7280; margin-bottom: 8px; }
+    .stat-number { font-size: 2.5rem; font-weight: 800; color: #2563eb; }
+    .table-card { background: white; border-radius: 28px; padding: 24px; margin-bottom: 24px; }
+    .table-card h3 { margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #f0f2f5; }
+    th { color: #6b7280; font-weight: 600; font-size: 0.8rem; }
+    .delete-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; margin-right: 5px; }
+    .edit-btn { background: #f59e0b; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; margin-right: 5px; }
+    .add-btn { background: #10b981; color: white; border: none; padding: 8px 20px; border-radius: 30px; cursor: pointer; margin-bottom: 16px; }
+    .approve-btn { background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; margin-right: 5px; }
+    .reject-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; }
+    .start-btn { background: #f59e0b; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; margin-right: 5px; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; }
+    .modal-content { background: white; max-width: 800px; width: 90%; border-radius: 32px; padding: 28px; max-height: 85vh; overflow-y: auto; }
+    .modal-content input, .modal-content textarea, .modal-content select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-radius: 16px; font-family: 'Inter', sans-serif; }
+    .modal-content button { background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; border: none; padding: 12px; border-radius: 40px; font-weight: 600; cursor: pointer; width: 100%; }
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 28px; border-radius: 60px; z-index: 2100; display: none; }
+    .loading { text-align: center; padding: 40px; color: #2563eb; }
+    .access-denied { text-align: center; padding: 60px; background: white; border-radius: 32px; }
+    .access-denied i { font-size: 4rem; color: #ef4444; margin-bottom: 20px; }
+    .payment-row { background: #fef3c7; }
+    .comp-card { background: #f8fafc; border-radius: 20px; padding: 16px; margin-bottom: 16px; border: 1px solid #e2e8f0; }
+    .comp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+    .question-item { background: #f8fafc; border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="topnav">
+    <div class="logo" onclick="location.href='index.html'"><i class="fas fa-heartbeat"></i> MedScenario</div>
+    <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+    <div class="navlinks" id="navLinks">
+      <a href="index.html">🏠 Home</a>
+      <a href="diseases.html">📚 Diseases</a>
+      <a href="scenarios.html">🩺 Scenarios</a>
+      <a href="competition.html">🏆 Competitions</a>
+      <a href="subscription.html">💎 Subscribe</a>
+      <a href="admin.html" class="active">👑 Admin</a>
+    </div>
+    <div class="nav-right">
+      <button class="notification-icon" id="notificationBtn"><i class="fas fa-bell"></i></button>
+      <div class="profile" id="profileBtn"><span id="userInitial">DR</span></div>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="profile.html">👤 My Profile</a>
+        <button id="logoutBtn">🚪 Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminContent">
+    <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Verifying access...</div>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast"></div>
+
+<script>
+  const API_URL = 'http://localhost:5000';
+  let currentCompetitionId = null;
+  let tempQuestions = [];
+  let currentEditId = null;
+  let currentEditType = null;
+
+  function getToken() { return localStorage.getItem('token'); }
+
+  function checkAuth() {
+    const token = getToken();
+    if (!token) { window.location.href = 'login.html'; return false; }
+    return true;
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = msg;
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 3000);
+  }
+
+  function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+
+  async function checkAdminAccess() {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/check`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      return data.isAdmin === true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function renderTempQuestions() {
+    const container = document.getElementById('questionsList');
+    if (!container) return;
+    if (tempQuestions.length === 0) {
+      container.innerHTML = '<p style="color:#6b7280;">No questions added yet. Add questions below.</p>';
+      return;
+    }
+    container.innerHTML = tempQuestions.map((q, idx) => `
+      <div class="question-item">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+          <strong>Question ${idx + 1}</strong>
+          <button class="delete-btn" onclick="removeQuestion(${idx})">Remove</button>
+        </div>
+        <p><strong>Q:</strong> ${q.text}</p>
+        <p><strong>Options:</strong> ${q.options.join(' | ')}</p>
+        <p><strong>Correct:</strong> ${q.correctAnswer}</p>
+      </div>
+    `).join('');
+  }
+
+  window.removeQuestion = (index) => {
+    tempQuestions.splice(index, 1);
+    renderTempQuestions();
+  };
+
+  async function loadTournaments() {
+    try {
+      const response = await fetch(`${API_URL}/api/advanced-competitions`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      if (data.success && data.competitions.length > 0) {
+        const container = document.getElementById('tournamentsList');
+        container.innerHTML = data.competitions.map(comp => `
+          <div class="comp-card">
+            <div class="comp-header">
+              <strong>${comp.name}</strong>
+              <span style="font-size:0.7rem; padding:4px 8px; border-radius:20px; background:${comp.status === 'upcoming' ? '#fef3c7' : comp.status === 'active' ? '#dcfce7' : '#e2e8f0'}">
+                ${comp.status.toUpperCase()}
+              </span>
+            </div>
+            <p>${comp.description || 'No description'}</p>
+            <p><strong>Prize:</strong> ${comp.prizePool} points | <strong>Questions:</strong> ${comp.totalQuestions}</p>
+            <p><strong>Participants:</strong> ${comp.participants?.length || 0}</p>
+            <div style="margin-top: 12px;">
+              <button class="start-btn" onclick="startCompetition('${comp._id}')">▶ Start</button>
+              <button class="delete-btn" onclick="deleteCompetition('${comp._id}')">Delete</button>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        document.getElementById('tournamentsList').innerHTML = '<div style="text-align:center; padding:40px;">No tournaments created yet</div>';
+      }
+    } catch (error) {
+      console.error('Error loading tournaments:', error);
+    }
+  }
+
+  window.startCompetition = async (id) => {
+    if (confirm('Start this competition? Users will be able to play immediately.')) {
+      try {
+        const response = await fetch(`${API_URL}/api/advanced-competitions/${id}/start`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('Competition started!');
+          loadTournaments();
+        }
+      } catch (error) {
+        showToast('Error starting competition');
+      }
+    }
+  };
+
+  window.deleteCompetition = async (id) => {
+    if (confirm('Delete this competition? All questions will also be deleted.')) {
+      try {
+        const response = await fetch(`${API_URL}/api/advanced-competitions/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('Competition deleted');
+          loadTournaments();
+        }
+      } catch (error) {
+        showToast('Error deleting competition');
+      }
+    }
+  };
+
+  // ============ EDIT FUNCTIONS ============
+  
+  async function editDisease(id) {
+    try {
+      const response = await fetch(`${API_URL}/api/diseases/${id}`);
+      const data = await response.json();
+      if (data.success) {
+        const d = data.disease;
+        currentEditId = id;
+        currentEditType = 'disease';
+        
+        const modalHtml = `
+          <div id="editModal" class="modal" style="display: flex;">
+            <div class="modal-content">
+              <h3>✏️ Edit Disease</h3>
+              <input type="text" id="diseaseName" value="${escapeHtml(d.name)}" placeholder="Disease Name">
+              <input type="text" id="diseaseSpecialty" value="${escapeHtml(d.specialty)}" placeholder="Specialty (OBGY, Surgery, Internal Medicine)">
+              <select id="diseaseYear"><option value="L5" ${d.year === 'L5' ? 'selected' : ''}>L5</option><option value="L6" ${d.year === 'L6' ? 'selected' : ''}>L6</option></select>
+              <textarea id="diseaseOverview" rows="3" placeholder="Overview">${escapeHtml(d.overview || '')}</textarea>
+              <input type="text" id="diseaseSymptoms" value="${escapeHtml((d.symptoms || []).join(', '))}" placeholder="Symptoms (comma separated)">
+              <input type="text" id="diseaseSigns" value="${escapeHtml((d.signs || []).join(', '))}" placeholder="Signs (comma separated)">
+              <input type="text" id="diseaseDDX" value="${escapeHtml((d.ddx || []).join(', '))}" placeholder="Differential Diagnosis (comma separated)">
+              <input type="text" id="diseaseIx" value="${escapeHtml((d.ix || []).join(', '))}" placeholder="Investigations (comma separated)">
+              <input type="text" id="diseaseTreatment" value="${escapeHtml(d.treatment || '')}" placeholder="Treatment">
+              <input type="text" id="diseaseComplication" value="${escapeHtml((d.complication || []).join(', '))}" placeholder="Complications (comma separated)">
+              <input type="text" id="diseasePrevention" value="${escapeHtml(d.prevention || '')}" placeholder="Prevention">
+              <input type="text" id="diseaseEpidemiology" value="${escapeHtml(d.epidemiology || '')}" placeholder="Epidemiology">
+              <button id="saveEditBtn">💾 Save Changes</button>
+              <button id="closeModalBtn" style="background: #6b7280; margin-top: 10px;">Cancel</button>
+            </div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        document.getElementById('saveEditBtn').onclick = async () => {
+          const updatedData = {
+            name: document.getElementById('diseaseName').value,
+            specialty: document.getElementById('diseaseSpecialty').value,
+            year: document.getElementById('diseaseYear').value,
+            overview: document.getElementById('diseaseOverview').value,
+            symptoms: document.getElementById('diseaseSymptoms').value.split(',').map(s => s.trim()),
+            signs: document.getElementById('diseaseSigns').value.split(',').map(s => s.trim()),
+            ddx: document.getElementById('diseaseDDX').value.split(',').map(s => s.trim()),
+            ix: document.getElementById('diseaseIx').value.split(',').map(s => s.trim()),
+            treatment: document.getElementById('diseaseTreatment').value,
+            complication: document.getElementById('diseaseComplication').value.split(',').map(s => s.trim()),
+            prevention: document.getElementById('diseasePrevention').value,
+            epidemiology: document.getElementById('diseaseEpidemiology').value
+          };
+          
+          try {
+            const response = await fetch(`${API_URL}/api/diseases/${currentEditId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+              body: JSON.stringify(updatedData)
+            });
+            const data = await response.json();
+            if (data.success) {
+              showToast('✅ Disease updated successfully');
+              document.getElementById('editModal').remove();
+              loadDiseases();
+              loadStats();
+            } else {
+              showToast('Error updating disease');
+            }
+          } catch (error) {
+            showToast('Error updating disease');
+          }
+        };
+        document.getElementById('closeModalBtn').onclick = () => document.getElementById('editModal').remove();
+      }
+    } catch (error) {
+      showToast('Error loading disease data');
+    }
+  }
+
+  async function editScenario(id) {
+    try {
+      const response = await fetch(`${API_URL}/api/scenarios/${id}`);
+      const data = await response.json();
+      if (data.success) {
+        const s = data.scenario;
+        currentEditId = id;
+        currentEditType = 'scenario';
+        
+        const modalHtml = `
+          <div id="editModal" class="modal" style="display: flex;">
+            <div class="modal-content">
+              <h3>✏️ Edit Scenario</h3>
+              <input type="text" id="scenarioTitle" value="${escapeHtml(s.title)}" placeholder="Scenario Title">
+              <input type="text" id="scenarioSpecialty" value="${escapeHtml(s.specialty)}" placeholder="Specialty">
+              <select id="scenarioDifficulty"><option value="Easy" ${s.difficulty === 'Easy' ? 'selected' : ''}>Easy</option><option value="Moderate" ${s.difficulty === 'Moderate' ? 'selected' : ''}>Moderate</option><option value="Hard" ${s.difficulty === 'Hard' ? 'selected' : ''}>Hard</option></select>
+              <select id="scenarioLevel"><option value="L5" ${s.level === 'L5' ? 'selected' : ''}>L5</option><option value="L6" ${s.level === 'L6' ? 'selected' : ''}>L6</option></select>
+              <textarea id="scenarioDescription" rows="2" placeholder="Short description">${escapeHtml(s.description || '')}</textarea>
+              <textarea id="scenarioCasePresentation" rows="4" placeholder="Case Presentation">${escapeHtml(s.casePresentation || '')}</textarea>
+              <input type="text" id="scenarioOptions" value="${escapeHtml((s.options || []).join(', '))}" placeholder="Options (comma separated)">
+              <input type="text" id="scenarioCorrectAnswer" value="${escapeHtml(s.correctAnswer || '')}" placeholder="Correct Answer">
+              <textarea id="scenarioExplanation" rows="3" placeholder="Explanation">${escapeHtml(s.explanation || '')}</textarea>
+              <textarea id="scenarioTopicOverview" rows="3" placeholder="Topic Overview">${escapeHtml(s.topicOverview || '')}</textarea>
+              <button id="saveEditBtn">💾 Save Changes</button>
+              <button id="closeModalBtn" style="background: #6b7280; margin-top: 10px;">Cancel</button>
+            </div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        document.getElementById('saveEditBtn').onclick = async () => {
+          const updatedData = {
+            title: document.getElementById('scenarioTitle').value,
+            specialty: document.getElementById('scenarioSpecialty').value,
+            difficulty: document.getElementById('scenarioDifficulty').value,
+            level: document.getElementById('scenarioLevel').value,
+            description: document.getElementById('scenarioDescription').value,
+            casePresentation: document.getElementById('scenarioCasePresentation').value,
+            options: document.getElementById('scenarioOptions').value.split(',').map(o => o.trim()),
+            correctAnswer: document.getElementById('scenarioCorrectAnswer').value,
+            explanation: document.getElementById('scenarioExplanation').value,
+            topicOverview: document.getElementById('scenarioTopicOverview').value
+          };
+          
+          try {
+            const response = await fetch(`${API_URL}/api/scenarios/${currentEditId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+              body: JSON.stringify(updatedData)
+            });
+            const data = await response.json();
+            if (data.success) {
+              showToast('✅ Scenario updated successfully');
+              document.getElementById('editModal').remove();
+              loadScenarios();
+              loadStats();
+            } else {
+              showToast('Error updating scenario');
+            }
+          } catch (error) {
+            showToast('Error updating scenario');
+          }
+        };
+        document.getElementById('closeModalBtn').onclick = () => document.getElementById('editModal').remove();
+      }
+    } catch (error) {
+      showToast('Error loading scenario data');
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  async function loadAdminDashboard() {
+    const isAdmin = await checkAdminAccess();
+    
+    if (!isAdmin) {
+      document.getElementById('adminContent').innerHTML = `
+        <div class="access-denied">
+          <i class="fas fa-shield-alt"></i>
+          <h2>Access Denied</h2>
+          <p>You don't have permission to access the admin dashboard.</p>
+          <button onclick="location.href='index.html'" style="margin-top: 20px; padding: 10px 24px; background: #2563eb; color: white; border: none; border-radius: 40px; cursor: pointer;">Return to Home</button>
+        </div>
+      `;
+      return false;
+    }
+    
+    document.getElementById('adminContent').innerHTML = `
+      <div class="admin-hero">
+        <h1><i class="fas fa-user-shield"></i> Admin Dashboard</h1>
+        <p>Welcome, Administrator! Manage your platform from here.</p>
+      </div>
+
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-info"><h3>Total Users</h3><div class="stat-number" id="totalUsers">-</div></div><div class="stat-icon"><i class="fas fa-users"></i></div></div>
+        <div class="stat-card"><div class="stat-info"><h3>Total Diseases</h3><div class="stat-number" id="totalDiseases">-</div></div><div class="stat-icon"><i class="fas fa-book"></i></div></div>
+        <div class="stat-card"><div class="stat-info"><h3>Total Scenarios</h3><div class="stat-number" id="totalScenarios">-</div></div><div class="stat-icon"><i class="fas fa-stethoscope"></i></div></div>
+        <div class="stat-card"><div class="stat-info"><h3>Total Competitions</h3><div class="stat-number" id="totalCompetitions">-</div></div><div class="stat-icon"><i class="fas fa-trophy"></i></div></div>
+      </div>
+
+      <!-- PENDING PAYMENTS SECTION -->
+      <div class="table-card" id="pendingPaymentsSection">
+        <h3><i class="fas fa-clock"></i> Pending Payment Requests</h3>
+        <div id="pendingPaymentsTable">
+          <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading payment requests...</div>
+        </div>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="admin-tab" data-section="tournaments">🏆 Tournaments</button>
+        <button class="admin-tab" data-section="diseases">📚 Diseases</button>
+        <button class="admin-tab" data-section="scenarios">🩺 Scenarios</button>
+        <button class="admin-tab" data-section="payments">💰 Payments</button>
+        <button class="admin-tab" data-section="users">👥 Users</button>
+      </div>
+
+      <!-- TOURNAMENTS SECTION -->
+      <div id="tournamentsSection" class="table-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+          <h3><i class="fas fa-trophy"></i> Create New Tournament</h3>
+          <button class="add-btn" id="showCreateTournamentBtn"><i class="fas fa-plus"></i> Create Tournament</button>
+        </div>
+        
+        <!-- Create Tournament Form -->
+        <div id="createTournamentForm" style="display: none; background: #f8fafc; padding: 20px; border-radius: 24px; margin-bottom: 24px;">
+          <h4>New Tournament Details</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0;">
+            <input type="text" id="compName" placeholder="Tournament Name" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
+            <input type="text" id="compCategory" placeholder="Category (e.g., OBGYN, Surgery)" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
+            <textarea id="compDescription" rows="2" placeholder="Description" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0; grid-column: span 2;"></textarea>
+            <input type="number" id="totalQuestions" placeholder="Total Questions (e.g., 30)" value="30" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
+            <input type="number" id="timePerQuestion" placeholder="Seconds per Question" value="120" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
+            <input type="datetime-local" id="startDate" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
+          </div>
+          <button class="add-btn" id="createTournamentBtn">Create Tournament →</button>
+        </div>
+
+        <!-- Add Questions Section -->
+        <div id="addQuestionsSection" style="display: none; background: #f8fafc; padding: 20px; border-radius: 24px; margin-bottom: 24px;">
+          <h4>Add Questions to <span id="currentCompName"></span></h4>
+          <div id="questionsList" style="margin: 16px 0;"></div>
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 16px;">
+            <h5>Add New Question</h5>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 12px; margin: 12px 0;">
+              <input type="text" id="qText" placeholder="Question text" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
+              <input type="text" id="optA" placeholder="Option A" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
+              <input type="text" id="optB" placeholder="Option B" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
+              <input type="text" id="optC" placeholder="Option C" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
+              <input type="text" id="optD" placeholder="Option D" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
+              <input type="text" id="correctAnswer" placeholder="Correct Answer (exact text)" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;">
+              <textarea id="explanation" rows="2" placeholder="Explanation" style="padding: 12px; border-radius: 16px; border: 1px solid #e2e8f0;"></textarea>
+            </div>
+            <button class="add-btn" id="addQuestionBtn">+ Add Question</button>
+            <button class="add-btn" id="saveQuestionsBtn" style="background: #10b981; margin-left: 10px;">Save All Questions</button>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 24px;"><i class="fas fa-list"></i> Existing Tournaments</h3>
+        <div id="tournamentsList"><div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading tournaments...</div></div>
+      </div>
+
+      <div id="diseasesSection" class="table-card" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3><i class="fas fa-book"></i> Manage Diseases</h3>
+          <button class="add-btn" id="addDiseaseBtn"><i class="fas fa-plus"></i> Add Disease</button>
+        </div>
+        <div id="diseasesTable"><div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading diseases...</div></div>
+      </div>
+
+      <div id="scenariosSection" class="table-card" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3><i class="fas fa-stethoscope"></i> Manage Scenarios</h3>
+          <button class="add-btn" id="addScenarioBtn"><i class="fas fa-plus"></i> Add Scenario</button>
+        </div>
+        <div id="scenariosTable"><div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading scenarios...</div></div>
+      </div>
+
+      <div id="paymentsSection" class="table-card" style="display: none;">
+        <h3><i class="fas fa-money-bill-wave"></i> Payment History</h3>
+        <div id="paymentsTable"><div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading payment history...</div></div>
+      </div>
+
+      <div id="usersSection" class="table-card" style="display: none;">
+        <h3><i class="fas fa-users"></i> All Users</h3>
+        <div id="allUsersTable"><div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading users...</div></div>
+      </div>
+    `;
+    
+    loadStats();
+    loadDiseases();
+    loadScenarios();
+    loadPendingPayments();
+    loadPaymentHistory();
+    loadAllUsers();
+    loadTournaments();
+    
+    // Tab switching
+    document.querySelectorAll('.admin-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tournamentsSection').style.display = 'none';
+        document.getElementById('diseasesSection').style.display = 'none';
+        document.getElementById('scenariosSection').style.display = 'none';
+        document.getElementById('paymentsSection').style.display = 'none';
+        document.getElementById('usersSection').style.display = 'none';
+        
+        if (tab.dataset.section === 'tournaments') {
+          document.getElementById('tournamentsSection').style.display = 'block';
+          loadTournaments();
+        } else if (tab.dataset.section === 'diseases') {
+          document.getElementById('diseasesSection').style.display = 'block';
+          loadDiseases();
+        } else if (tab.dataset.section === 'scenarios') {
+          document.getElementById('scenariosSection').style.display = 'block';
+          loadScenarios();
+        } else if (tab.dataset.section === 'payments') {
+          document.getElementById('paymentsSection').style.display = 'block';
+          loadPaymentHistory();
+        } else {
+          document.getElementById('usersSection').style.display = 'block';
+          loadAllUsers();
+        }
+      });
+    });
+    
+    // Tournament creation UI
+    document.getElementById('showCreateTournamentBtn').onclick = () => {
+      const form = document.getElementById('createTournamentForm');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    };
+    
+    document.getElementById('createTournamentBtn').onclick = async () => {
+      const competitionData = {
+        name: document.getElementById('compName').value,
+        category: document.getElementById('compCategory').value,
+        description: document.getElementById('compDescription').value,
+        entryFee: 0,
+        totalQuestions: parseInt(document.getElementById('totalQuestions').value),
+        timePerQuestion: parseInt(document.getElementById('timePerQuestion').value),
+        startDate: document.getElementById('startDate').value
+      };
+
+      if (!competitionData.name || !competitionData.startDate) {
+        showToast('Please fill tournament name and start date');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/advanced-competitions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify(competitionData)
+        });
+        const data = await response.json();
+        if (data.success) {
+          currentCompetitionId = data.competition._id;
+          document.getElementById('currentCompName').innerText = data.competition.name;
+          document.getElementById('addQuestionsSection').style.display = 'block';
+          document.getElementById('createTournamentForm').style.display = 'none';
+          showToast('Tournament created! Now add questions.');
+          loadTournaments();
+        } else {
+          showToast('Error creating tournament');
+        }
+      } catch (error) {
+        showToast('Error creating tournament');
+      }
+    };
+    
+    document.getElementById('addQuestionBtn').onclick = () => {
+      const question = {
+        text: document.getElementById('qText').value,
+        options: [
+          document.getElementById('optA').value,
+          document.getElementById('optB').value,
+          document.getElementById('optC').value,
+          document.getElementById('optD').value
+        ],
+        correctAnswer: document.getElementById('correctAnswer').value,
+        explanation: document.getElementById('explanation').value
+      };
+
+      if (!question.text || !question.options[0] || !question.correctAnswer) {
+        showToast('Please fill question text, options, and correct answer');
+        return;
+      }
+
+      tempQuestions.push(question);
+      renderTempQuestions();
+      
+      document.getElementById('qText').value = '';
+      document.getElementById('optA').value = '';
+      document.getElementById('optB').value = '';
+      document.getElementById('optC').value = '';
+      document.getElementById('optD').value = '';
+      document.getElementById('correctAnswer').value = '';
+      document.getElementById('explanation').value = '';
+    };
+    
+    document.getElementById('saveQuestionsBtn').onclick = async () => {
+      if (tempQuestions.length === 0) {
+        showToast('Please add at least one question');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/advanced-competitions/${currentCompetitionId}/questions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify({ questions: tempQuestions })
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast(`${tempQuestions.length} questions saved successfully!`);
+          tempQuestions = [];
+          renderTempQuestions();
+          document.getElementById('addQuestionsSection').style.display = 'none';
+          loadTournaments();
+        } else {
+          showToast('Error saving questions');
+        }
+      } catch (error) {
+        showToast('Error saving questions');
+      }
+    };
+    
+    document.getElementById('addDiseaseBtn').onclick = showAddDiseaseModal;
+    document.getElementById('addScenarioBtn').onclick = showAddScenarioModal;
+    
+    return true;
+  }
+
+  async function loadStats() {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/stats`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      if (data.success) {
+        document.getElementById('totalUsers').innerText = data.stats.totalUsers;
+        document.getElementById('totalDiseases').innerText = data.stats.totalDiseases;
+        document.getElementById('totalScenarios').innerText = data.stats.totalScenarios;
+        document.getElementById('totalCompetitions').innerText = data.stats.totalCompetitions;
+      }
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  }
+
+  async function loadPendingPayments() {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/pending-payments`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      
+      if (data.success && data.payments && data.payments.length > 0) {
+        const tableHtml = `
+          <table>
+            <thead><tr><th>User</th><th>Email</th><th>Transaction ID</th><th>Phone</th><th>Amount</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${data.payments.map(p => `
+                <tr class="payment-row">
+                  <td><strong>${p.name}</strong></td>
+                  <td>${p.email}</td>
+                  <td>${p.pendingPayment.transaction_id}</td>
+                  <td>${p.pendingPayment.phone_number}</td>
+                  <td>TZS ${p.pendingPayment.amount || 3000}</td>
+                  <td>${new Date(p.pendingPayment.requestedAt).toLocaleString()}</td>
+                  <td>
+                    <button class="approve-btn" onclick="approvePayment('${p._id}')">✓ Approve</button>
+                    <button class="reject-btn" onclick="rejectPayment('${p._id}')">✗ Reject</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        document.getElementById('pendingPaymentsTable').innerHTML = tableHtml;
+      } else {
+        document.getElementById('pendingPaymentsTable').innerHTML = '<div style="text-align:center; padding:40px;">No pending payment requests</div>';
+      }
+    } catch (error) {
+      console.error('Error loading payments:', error);
+      document.getElementById('pendingPaymentsTable').innerHTML = '<div style="text-align:center; padding:40px;">Error loading payment requests</div>';
+    }
+  }
+
+  async function loadPaymentHistory() {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/payment-history`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      
+      if (data.success && data.payments && data.payments.length > 0) {
+        const tableHtml = `
+          <tr>
+            <thead><tr><th>User</th><th>Transaction ID</th><th>Phone</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody>
+              ${data.payments.map(p => `
+                <tr>
+                  <td><strong>${p.name}</strong></td>
+                  <td>${p.transaction_id}</td>
+                  <td>${p.phone_number}</td>
+                  <td>TZS ${p.amount}</td>
+                  <td style="color: ${p.status === 'approved' ? '#10b981' : '#ef4444'}">${p.status === 'approved' ? '✅ Approved' : '❌ Rejected'}</td>
+                  <td>${new Date(p.date).toLocaleString()}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        document.getElementById('paymentsTable').innerHTML = tableHtml;
+      } else {
+        document.getElementById('paymentsTable').innerHTML = '<div style="text-align:center; padding:40px;">No payment history found</div>';
+      }
+    } catch (error) {
+      console.error('Error loading payment history:', error);
+      document.getElementById('paymentsTable').innerHTML = '<div style="text-align:center; padding:40px;">Error loading payment history</div>';
+    }
+  }
+
+  async function approvePayment(userId) {
+    if (confirm('Approve this payment and upgrade user to premium?')) {
+      try {
+        const response = await fetch(`${API_URL}/api/admin/approve-payment`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify({ userId })
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast(data.message);
+          loadPendingPayments();
+          loadPaymentHistory();
+          loadStats();
+          loadAllUsers();
+        } else {
+          showToast('Error approving payment');
+        }
+      } catch (error) {
+        showToast('Error approving payment');
+      }
+    }
+  }
+
+  async function rejectPayment(userId) {
+    if (confirm('Reject this payment request?')) {
+      try {
+        const response = await fetch(`${API_URL}/api/admin/reject-payment`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify({ userId })
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('Payment request rejected');
+          loadPendingPayments();
+          loadPaymentHistory();
+        } else {
+          showToast('Error rejecting payment');
+        }
+      } catch (error) {
+        showToast('Error rejecting payment');
+      }
+    }
+  }
+
+  async function loadDiseases() {
+    try {
+      const response = await fetch(`${API_URL}/api/diseases`);
+      const data = await response.json();
+      if (data.success && data.diseases.length > 0) {
+        const tableHtml = `
+          </table>
+            <thead><tr><th>Name</th><th>Specialty</th><th>Year</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${data.diseases.map(disease => `
+                <tr>
+                  <td><strong>${disease.name}</strong></td>
+                  <td>${disease.specialty}</td>
+                  <td>${disease.year || 'L5'}</td>
+                  <td>
+                    <button class="edit-btn" onclick="editDisease('${disease._id}')">✏️ Edit</button>
+                    <button class="delete-btn" onclick="deleteDisease('${disease._id}')">Delete</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        document.getElementById('diseasesTable').innerHTML = tableHtml;
+      } else {
+        document.getElementById('diseasesTable').innerHTML = '<div style="text-align:center; padding:40px;">No diseases found</div>';
+      }
+    } catch (error) {
+      document.getElementById('diseasesTable').innerHTML = '<div style="text-align:center; padding:40px;">Error loading diseases</div>';
+    }
+  }
+
+  async function loadScenarios() {
+    try {
+      const response = await fetch(`${API_URL}/api/scenarios`);
+      const data = await response.json();
+      if (data.success && data.scenarios.length > 0) {
+        const tableHtml = `
+          表表格
+            <thead><tr><th>Title</th><th>Specialty</th><th>Difficulty</th><th>Level</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${data.scenarios.map(scenario => `
+                <tr>
+                  <td><strong>${scenario.title}</strong></td>
+                  <td>${scenario.specialty}</td>
+                  <td>${scenario.difficulty}</td>
+                  <td>${scenario.level || 'L5'}</td>
+                  <td>
+                    <button class="edit-btn" onclick="editScenario('${scenario._id}')">✏️ Edit</button>
+                    <button class="delete-btn" onclick="deleteScenario('${scenario._id}')">Delete</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        document.getElementById('scenariosTable').innerHTML = tableHtml;
+      } else {
+        document.getElementById('scenariosTable').innerHTML = '<div style="text-align:center; padding:40px;">No scenarios found</div>';
+      }
+    } catch (error) {
+      document.getElementById('scenariosTable').innerHTML = '<div style="text-align:center; padding:40px;">Error loading scenarios</div>';
+    }
+  }
+
+  window.deleteDisease = async (id) => {
+    if (confirm('Are you sure you want to delete this disease?')) {
+      try {
+        const response = await fetch(`${API_URL}/api/diseases/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('✅ Disease deleted successfully');
+          loadDiseases();
+          loadStats();
+        } else {
+          showToast('Error deleting disease');
+        }
+      } catch (error) {
+        showToast('Error deleting disease');
+      }
+    }
+  };
+
+  window.deleteScenario = async (id) => {
+    if (confirm('Are you sure you want to delete this scenario?')) {
+      try {
+        const response = await fetch(`${API_URL}/api/scenarios/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('✅ Scenario deleted successfully');
+          loadScenarios();
+          loadStats();
+        } else {
+          showToast('Error deleting scenario');
+        }
+      } catch (error) {
+        showToast('Error deleting scenario');
+      }
+    }
+  };
+
+  function showAddDiseaseModal() {
+    const modalHtml = `
+      <div id="addModal" class="modal" style="display: flex;">
+        <div class="modal-content">
+          <h3>➕ Add New Disease</h3>
+          <input type="text" id="diseaseName" placeholder="Disease Name">
+          <input type="text" id="diseaseSpecialty" placeholder="Specialty (OBGY, Surgery, Internal Medicine)">
+          <select id="diseaseYear"><option value="L5">L5</option><option value="L6">L6</option></select>
+          <textarea id="diseaseOverview" rows="3" placeholder="Overview"></textarea>
+          <input type="text" id="diseaseSymptoms" placeholder="Symptoms (comma separated)">
+          <input type="text" id="diseaseSigns" placeholder="Signs (comma separated)">
+          <input type="text" id="diseaseDDX" placeholder="Differential Diagnosis (comma separated)">
+          <input type="text" id="diseaseIx" placeholder="Investigations (comma separated)">
+          <input type="text" id="diseaseTreatment" placeholder="Treatment">
+          <input type="text" id="diseaseComplication" placeholder="Complications (comma separated)">
+          <input type="text" id="diseasePrevention" placeholder="Prevention">
+          <input type="text" id="diseaseEpidemiology" placeholder="Epidemiology">
+          <button id="saveAddBtn">💾 Save Disease</button>
+          <button id="closeModalBtn" style="background: #6b7280; margin-top: 10px;">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    document.getElementById('saveAddBtn').onclick = async () => {
+      const diseaseData = {
+        name: document.getElementById('diseaseName').value,
+        specialty: document.getElementById('diseaseSpecialty').value,
+        year: document.getElementById('diseaseYear').value,
+        overview: document.getElementById('diseaseOverview').value,
+        symptoms: document.getElementById('diseaseSymptoms').value.split(',').map(s => s.trim()),
+        signs: document.getElementById('diseaseSigns').value.split(',').map(s => s.trim()),
+        ddx: document.getElementById('diseaseDDX').value.split(',').map(s => s.trim()),
+        ix: document.getElementById('diseaseIx').value.split(',').map(s => s.trim()),
+        treatment: document.getElementById('diseaseTreatment').value,
+        complication: document.getElementById('diseaseComplication').value.split(',').map(s => s.trim()),
+        prevention: document.getElementById('diseasePrevention').value,
+        epidemiology: document.getElementById('diseaseEpidemiology').value
+      };
+      
+      if (!diseaseData.name || !diseaseData.specialty || !diseaseData.overview) {
+        showToast('Please fill required fields');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}/api/diseases`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+          body: JSON.stringify(diseaseData)
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('✅ Disease added successfully');
+          document.getElementById('addModal').remove();
+          loadDiseases();
+          loadStats();
+        } else {
+          showToast('Error adding disease');
+        }
+      } catch (error) {
+        showToast('Error adding disease');
+      }
+    };
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById('addModal').remove();
+  }
+
+  function showAddScenarioModal() {
+    const modalHtml = `
+      <div id="addModal" class="modal" style="display: flex;">
+        <div class="modal-content">
+          <h3>➕ Add New Scenario</h3>
+          <input type="text" id="scenarioTitle" placeholder="Scenario Title">
+          <input type="text" id="scenarioSpecialty" placeholder="Specialty (Pediatrics, OBGYN, Surgery, Internal Medicine)">
+          <select id="scenarioDifficulty"><option value="Easy">Easy</option><option value="Moderate">Moderate</option><option value="Hard">Hard</option></select>
+          <select id="scenarioLevel"><option value="L5">L5</option><option value="L6">L6</option></select>
+          <textarea id="scenarioDescription" rows="2" placeholder="Short description"></textarea>
+          <textarea id="scenarioCasePresentation" rows="4" placeholder="Case Presentation (full patient case)"></textarea>
+          <input type="text" id="scenarioOptions" placeholder="Options (comma separated: A. Option 1, B. Option 2, C. Option 3, D. Option 4)">
+          <input type="text" id="scenarioCorrectAnswer" placeholder="Correct Answer (exact text as in options)">
+          <textarea id="scenarioExplanation" rows="3" placeholder="Explanation"></textarea>
+          <textarea id="scenarioTopicOverview" rows="3" placeholder="Topic Overview"></textarea>
+          <button id="saveAddBtn">💾 Save Scenario</button>
+          <button id="closeModalBtn" style="background: #6b7280; margin-top: 10px;">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    document.getElementById('saveAddBtn').onclick = async () => {
+      const optionsRaw = document.getElementById('scenarioOptions').value;
+      const options = optionsRaw.split(',').map(o => o.trim());
+      
+      const scenarioData = {
+        title: document.getElementById('scenarioTitle').value,
+        specialty: document.getElementById('scenarioSpecialty').value,
+        difficulty: document.getElementById('scenarioDifficulty').value,
+        level: document.getElementById('scenarioLevel').value,
+        description: document.getElementById('scenarioDescription').value,
+        casePresentation: document.getElementById('scenarioCasePresentation').value,
+        options: options,
+        correctAnswer: document.getElementById('scenarioCorrectAnswer').value,
+        explanation: document.getElementById('scenarioExplanation').value,
+        topicOverview: document.getElementById('scenarioTopicOverview').value
+      };
+      
+      if (!scenarioData.title || !scenarioData.specialty || !scenarioData.casePresentation || !scenarioData.correctAnswer) {
+        showToast('Please fill required fields');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}/api/scenarios`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+          body: JSON.stringify(scenarioData)
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('✅ Scenario added successfully');
+          document.getElementById('addModal').remove();
+          loadScenarios();
+          loadStats();
+        } else {
+          showToast('Error adding scenario');
+        }
+      } catch (error) {
+        showToast('Error adding scenario');
+      }
+    };
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById('addModal').remove();
+  }
+
+  async function loadAllUsers() {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/users`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await response.json();
+      if (data.success && data.users.length > 0) {
+        const tableHtml = `
+          </table>
+            <thead><tr><th>Rank</th><th>Name</th><th>Email</th><th>Points</th><th>Subscription</th></tr></thead>
+            <tbody>
+              ${data.users.map((user, index) => `
+                <tr>
+                  <td>#${index + 1}</td>
+                  <td><strong>${user.name}</strong></td>
+                  <td>${user.email}</td>
+                  <td class="user-points">${user.points || 0} pts</td>
+                  <td>${user.subscription === 'premium' ? '⭐ Premium' : '📖 Free'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        document.getElementById('allUsersTable').innerHTML = tableHtml;
+      } else {
+        document.getElementById('allUsersTable').innerHTML = '<div style="text-align:center; padding:40px;">No users found</div>';
+      }
+    } catch (error) {
+      document.getElementById('allUsersTable').innerHTML = '<div style="text-align:center; padding:40px;">Error loading users</div>';
+    }
+  }
+
+  document.getElementById('hamburgerBtn').onclick = () => document.getElementById('navLinks').classList.toggle('show');
+  document.getElementById('profileBtn').onclick = (e) => { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); };
+  document.onclick = () => document.getElementById('dropdownMenu').classList.remove('show');
+  document.getElementById('logoutBtn').onclick = logout;
+  document.getElementById('notificationBtn').onclick = () => showToast("🔔 Admin notifications");
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  document.getElementById('userInitial').innerText = (user.name || 'DR').charAt(0).toUpperCase();
+
+  if (checkAuth()) {
+    loadAdminDashboard();
+  }
+</script>
+</body>
+</html>
